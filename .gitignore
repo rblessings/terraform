@@ -1,0 +1,10 @@
+# Ignore IDE files
+.idea/
+
+# Ignore .terraform directory
+.terraform/
+
+# Ignore Terraform plan files
+*.tfplan
+*.tfstate
+*.tfstate.backup

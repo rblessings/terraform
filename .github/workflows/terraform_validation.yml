@@ -1,0 +1,39 @@
+name: Terraform Validator
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.10.2
+
+      - name: Initialize Terraform
+        run: terraform init
+
+      - name: Run terraform validate
+        run: terraform validate
+
+      - name: Run tflint
+        uses: terraform-linters/setup-tflint@v3
+        with:
+          tflint_version: v0.54.0
+
+      - name: Lint Terraform
+        run: tflint --format=compact
+
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.3
+
+      - name: Run terraform plan (optional check)
+        run: terraform plan
