@@ -18,9 +18,7 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.10.2
-
-      - name: Set Terraform Cloud API token
-        run: echo "TF_CLOUD_TOKEN=${{ secrets.TF_CLOUD_TOKEN }}" >> $GITHUB_ENV
+          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
 
       - name: Initialize Terraform
         run: terraform init
