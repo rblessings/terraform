@@ -7,6 +7,13 @@ terraform {
       version = "2.35.0"
     }
   }
+
+  backend "remote" {
+    organization = "rblessings-cloud-devops"
+    workspaces {
+      name = "terraform-project-workspace"
+    }
+  }
 }
 
 variable "control_plane_node_host" {
