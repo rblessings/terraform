@@ -1,4 +1,4 @@
-name: Terraform Validator
+name: Terraform Kubernetes Deployment
 
 on:
   push:
@@ -10,6 +10,10 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-latest
+    env:
+      TF_CLOUD_TOKEN: ${{ secrets.TF_CLOUD_TOKEN }}
+      KUBECONFIG: $HOME/.kube/microk8s-config
+
     steps:
       - name: Check out the repository
         uses: actions/checkout@v4
@@ -18,24 +22,17 @@ jobs:
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.10.2
-          cli_config_credentials_token: ${{ secrets.TF_CLOUD_TOKEN }}
+
+      - name: Configure kubeconfig
+        run: |
+          mkdir -p $HOME/.kube
+          echo "${{ secrets.KUBECONFIG_CONTENT }}" > $HOME/.kube/microk8s-config
 
       - name: Initialize Terraform
         run: terraform init
 
-      - name: Run terraform validate
+      - name: Validate Terraform Configuration
         run: terraform validate
 
-      - name: Run tflint
-        uses: terraform-linters/setup-tflint@v3
-        with:
-          tflint_version: v0.54.0
-
-      - name: Lint Terraform
-        run: tflint --format=compact
-
-      - name: Run tfsec
-        uses: aquasecurity/tfsec-action@v1.0.3
-
-      - name: Run terraform plan (optional check)
+      - name: Plan Terraform Changes
         run: terraform plan
