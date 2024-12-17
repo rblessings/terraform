@@ -19,7 +19,7 @@ jobs:
           terraform_version: 1.10.2
 
       - name: Set Terraform Cloud API token
-        run: echo "TFE_TOKEN=${{ secrets.TFE_TOKEN }}" >> $GITHUB_ENV
+        run: echo "TF_CLOUD_TOKEN=${{ secrets.TF_CLOUD_TOKEN }}" >> $GITHUB_ENV
 
       - name: Initialize Terraform
         run: terraform init
