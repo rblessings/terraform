@@ -42,7 +42,7 @@ Before using this repository, ensure that the following software is installed:
 - [Terraform](https://www.terraform.io/downloads.html) (version >= 1.x)
 - [Git](https://git-scm.com/)
 - [GitHub Account](https://github.com)
-- Access to cloud provider(s) (AWS, Azure, GCP, etc.) with appropriate credentials
+- Access to a Kubernetes cluster (On-prem, AWS, Azure, GCP, etc.) with appropriate credentials.
 
 ## Usage
 
