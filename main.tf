@@ -22,9 +22,19 @@ variable "control_plane_node_host" {
   description = "URL of the control plane node, including protocol, IP address, and port."
 }
 
+variable "kube_config_path" {
+  type        = string
+  default     = "~/.kube/microk8s-config"
+  description = ""
+  validation {
+    condition     = contains(["~/.kube/config", "~/.kube/microk8s-config"], var.kube_config_path)
+    error_message = "The valid kube config path should be either '~/.kube/config' or '~/.kube/microk8s-config'."
+  }
+}
+
 provider "kubernetes" {
   host        = var.control_plane_node_host
-  config_path = "~/.kube/microk8s-config"
+  config_path = var.kube_config_path
 }
 
 resource "kubernetes_deployment" "test" {
