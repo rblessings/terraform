@@ -1,4 +1,4 @@
-name: Terraform Kubernetes Deployment
+name: Terraform Validation
 
 on:
   push:
