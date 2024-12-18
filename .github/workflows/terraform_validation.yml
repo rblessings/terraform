@@ -26,6 +26,7 @@ jobs:
           VALIDATE_YAML: true
           VALIDATE_JSON: true
           VALIDATE_MD: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   terraform:
     name: Validate and Lint Terraform Configuration
