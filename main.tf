@@ -1,21 +1,3 @@
-terraform {
-  required_version = ">= 1.10.2"
-
-  required_providers {
-    kubernetes = {
-      source  = "hashicorp/kubernetes"
-      version = "2.35.0"
-    }
-  }
-
-  backend "remote" {
-    organization = "rblessings-cloud-devops"
-    workspaces {
-      name = "terraform-project-workspace"
-    }
-  }
-}
-
 provider "kubernetes" {
   host        = trimspace(var.control_plane_node_host)
   config_path = trimspace(var.kube_config_path)

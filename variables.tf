@@ -1,6 +1,5 @@
 variable "control_plane_node_host" {
   type        = string
-  default     = "https://10.38.125.65:16443"
   description = "URL of the control plane node, including protocol, IP address, and optional port."
 
   # Validation to ensure control_plane_node_host matches the URL format:
@@ -18,7 +17,6 @@ variable "control_plane_node_host" {
 
 variable "kube_config_path" {
   type        = string
-  default     = "~/.kube/microk8s-config"
   description = "Path to the Kubernetes config file used for authentication and cluster access."
 
   validation {
