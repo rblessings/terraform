@@ -46,12 +46,12 @@ Before using this repository, ensure that the following software is installed:
 
 ## Usage
 
-### Running Terraform
+### Running Terraform (Choose your preferred environment)
 
 ```bash
-terraform plan
-terraform apply
-terraform destroy
+terraform plan -var-file="environments/dev.tfvars"
+terraform apply -var-file="environments/dev.tfvars"
+terraform destroy -var-file="environments/dev.tfvars"
 ```
 
 ## License
