@@ -4,12 +4,23 @@ provider "kubernetes" {
 }
 
 module "nginx_deployment" {
-  source         = "./modules/deployment"
-  name           = "nginx"
-  app_label      = "MyTestApp"
-  image          = "nginx"
-  container_name = "nginx-container"
-  replicas       = 3
+  source                          = "./modules/deployment"
+  name                            = "nginx"
+  app_label                       = "MyTestApp"
+  image                           = "nginx"
+  container_name                  = "nginx-container"
+  replicas                        = 3
+  container_port                  = 80
+  cpu_limit                       = "500m"
+  memory_limit                    = "512Mi"
+  cpu_request                     = "250m"
+  memory_request                  = "256Mi"
+  liveness_probe_path             = "/"
+  liveness_initial_delay_seconds  = 10
+  liveness_period_seconds         = 5
+  readiness_probe_path            = "/"
+  readiness_initial_delay_seconds = 5
+  readiness_period_seconds        = 5
 }
 
 module "nginx_service" {

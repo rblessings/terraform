@@ -46,7 +46,7 @@ Before using this repository, ensure that the following software is installed:
 
 ## Usage
 
-### Running Terraform (Choose your preferred environment)
+### Running Terraform
 
 ```bash
 terraform plan -var-file="environments/dev.tfvars"
