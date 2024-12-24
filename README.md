@@ -4,7 +4,7 @@ This repository contains a Terraform project where I am experimenting with advan
 setting up a GitHub CI/CD pipeline using GitHub Actions. The goal is to create an infrastructure-as-code (IaC) solution
 that adheres to the latest standards in Terraform and integrates seamlessly with CI/CD workflows.
 
-[![Terraform Validator](https://github.com/rblessings/terraform/actions/workflows/terraform_validation.yml/badge.svg)](https://github.com/rblessings/terraform/actions/workflows/terraform_validation.yml)
+[![Terraform Validation](https://github.com/rblessings/terraform/actions/workflows/terraform.yml/badge.svg)](https://github.com/rblessings/terraform/actions/workflows/terraform.yml)
 [![Dependabot Updates](https://github.com/rblessings/terraform/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/rblessings/terraform/actions/workflows/dependabot/dependabot-updates)
 
 ## Table of Contents
