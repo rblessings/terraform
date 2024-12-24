@@ -29,6 +29,10 @@ module "nginx_service" {
   app_label   = module.nginx_deployment.deployment_app_label
   port        = 80
   target_port = 80
+
+  depends_on = [
+    module.nginx_deployment
+  ]
 }
 
 output "nginx_deployment_name" {
