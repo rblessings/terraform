@@ -7,3 +7,9 @@ updates:
     open-pull-requests-limit: 5
     allow:
       - dependency-type: "all"
+    ignore:
+      # This rule ensures that Dependabot ignores Terraform versions below 1.10.2,
+      # as they are incompatible with our configuration (required_version = ">= 1.10.2").
+      # Dependabot will still provide updates for Terraform versions 1.10.2 and greater.
+      - dependency-name: "terraform"
+        versions: ["<1.10.2"]
