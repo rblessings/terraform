@@ -29,6 +29,7 @@ This project demonstrates how to build, deploy, and manage infrastructure with T
 - Terraform best practices (code structure, variable usage, state management)
 - Automated deployment using GitHub Actions
 - Versioning and code review workflows
+- Kubernetes Cluster Monitoring and Observability
 
 ## Features
 
