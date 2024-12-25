@@ -5,6 +5,8 @@ on:
     branches:
       - main
   pull_request:
+    branches:
+      - main
 
 jobs:
   superlinter:
@@ -62,3 +64,17 @@ jobs:
 
       - name: Execute TFSEC
         uses: aquasecurity/tfsec-action@v1.0.3
+
+      # If your Kubernetes cluster is publicly accessible, you may uncomment the following steps
+      # to integrate Terraform's `plan` and `apply` stages into your CI/CD pipeline.
+      # The Terraform Plan step will run on pull requests to review the changes before merging.
+      # The Terraform Apply step will automatically apply the changes when pushing to the `main` branch.
+      # Ensure that your cluster's access permissions and security policies allow for remote management.
+
+#      - name: Terraform Plan
+#        run: terraform plan -no-color
+#        if: github.event_name == 'pull_request'
+
+#      - name: Terraform Apply
+#        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+#        run: terraform apply -auto-approve

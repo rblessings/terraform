@@ -1,3 +1,9 @@
+variable "namespace" {
+  description = "Namespace name for service"
+  type = string
+  default = "default"
+}
+
 variable "name" {
   description = "Name of the service"
   type        = string
