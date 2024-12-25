@@ -47,10 +47,10 @@ This project demonstrates how to build, deploy, and manage infrastructure with T
 
 Before using this repository, ensure that the following software is installed:
 
-- [Terraform](https://www.terraform.io/downloads.html) (version >= 1.x)
+- [Terraform](https://www.terraform.io/downloads.html) (1.10.3 or any newer version)
 - [Git](https://git-scm.com/)
 - [GitHub Account](https://github.com)
-- Access to a Kubernetes cluster (On-prem, AWS, Azure, GCP, etc.) with appropriate credentials.
+- Access to a Kubernetes cluster (on-premises, AWS, Azure, GCP, etc.) with the appropriate credentials.
 
 ## Usage
 
