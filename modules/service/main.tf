@@ -1,5 +1,6 @@
 resource "kubernetes_service" "this" {
   metadata {
+    namespace = var.namespace
     name = var.name
   }
 
