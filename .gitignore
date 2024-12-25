@@ -8,3 +8,5 @@
 *.tfplan
 *.tfstate
 *.tfstate.backup
+
+tfplan
