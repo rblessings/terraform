@@ -57,8 +57,7 @@ Before using this repository, ensure that the following software is installed:
 ### Running Terraform
 
 ```bash
-terraform plan -var-file="environments/dev.tfvars" -out=tfplan
-terraform show -json tfplan | jq
+terraform plan -var-file="environments/dev.tfvars"
 terraform apply -var-file="environments/dev.tfvars"
 terraform destroy -var-file="environments/dev.tfvars"
 ```
