@@ -106,6 +106,10 @@ datasources:
       url: http://prometheus-server.monitoring.svc.cluster.local
 EOF
   ]
+
+  depends_on = [
+    helm_release.prometheus
+  ]
 }
 
 output "nginx_deployment_name" {
