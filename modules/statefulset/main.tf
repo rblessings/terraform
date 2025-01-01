@@ -1,6 +1,6 @@
 resource "kubernetes_persistent_volume" "this" {
   metadata {
-    name   = "${var.name}-pv"
+    name = "${var.name}-pv"
     labels = merge(var.labels, {
       type = "hostpath"
     })

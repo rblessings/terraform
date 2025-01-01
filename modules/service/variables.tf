@@ -1,7 +1,7 @@
 variable "namespace" {
   description = "Namespace name for service"
-  type = string
-  default = "default"
+  type        = string
+  default     = "default"
 }
 
 variable "name" {

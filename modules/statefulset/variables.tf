@@ -95,7 +95,7 @@ variable "resource_requests" {
 
 variable "liveness_probe" {
   type = object({
-    exec_command = list(string)
+    exec_command          = list(string)
     initial_delay_seconds = number
     period_seconds        = number
   })
@@ -105,7 +105,7 @@ variable "liveness_probe" {
 
 variable "readiness_probe" {
   type = object({
-    exec_command = list(string)
+    exec_command          = list(string)
     initial_delay_seconds = number
     period_seconds        = number
   })
@@ -119,7 +119,7 @@ variable "environment" {
     value = string
   }))
   description = "Environment variables for the container."
-  default = []
+  default     = []
 }
 
 variable "mount_path" {

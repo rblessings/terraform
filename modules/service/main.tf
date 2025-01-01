@@ -14,8 +14,8 @@ resource "kubernetes_service" "this" {
     dynamic "port" {
       for_each = var.ports
       content {
-        name       = port.value.name
-        port       = port.value.port
+        name        = port.value.name
+        port        = port.value.port
         target_port = port.value.target_port
       }
     }
