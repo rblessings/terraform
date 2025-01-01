@@ -17,7 +17,7 @@ variable "app_label" {
 variable "service_type" {
   description = "Type of the Kubernetes service"
   type        = string
-  default     = "NodePort"
+  default     = "ClusterIP"
 }
 
 variable "port" {

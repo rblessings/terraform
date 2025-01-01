@@ -61,23 +61,34 @@ resource "kubernetes_deployment" "this" {
             }
           }
 
-          liveness_probe {
-            http_get {
-              path = var.liveness_probe_path
-              port = var.container_port
+          # liveness_probe {
+          #   http_get {
+          #     path = var.liveness_probe_path
+          #     port = var.container_port
+          #   }
+          #   initial_delay_seconds = var.liveness_initial_delay_seconds
+          #   period_seconds        = var.liveness_period_seconds
+          # }
+          #
+          # readiness_probe {
+          #   http_get {
+          #     path = var.readiness_probe_path
+          #     port = var.container_port
+          #   }
+          #   initial_delay_seconds = var.readiness_initial_delay_seconds
+          #   period_seconds        = var.readiness_period_seconds
+          # }
+
+          # Dynamic environment variables section
+          dynamic "env" {
+            for_each = var.environment != null ? var.environment : []
+
+            content {
+              name  = env.value.name
+              value = env.value.value
             }
-            initial_delay_seconds = var.liveness_initial_delay_seconds
-            period_seconds        = var.liveness_period_seconds
           }
 
-          readiness_probe {
-            http_get {
-              path = var.readiness_probe_path
-              port = var.container_port
-            }
-            initial_delay_seconds = var.readiness_initial_delay_seconds
-            period_seconds        = var.readiness_period_seconds
-          }
         }
       }
     }
