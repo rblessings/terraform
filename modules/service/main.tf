@@ -1,7 +1,7 @@
 resource "kubernetes_service" "this" {
   metadata {
     namespace = var.namespace
-    name = var.name
+    name      = var.name
   }
 
   spec {
@@ -11,9 +11,14 @@ resource "kubernetes_service" "this" {
 
     type = var.service_type
 
-    port {
-      port        = var.port
-      target_port = var.target_port
+    dynamic "port" {
+      for_each = var.ports
+      content {
+        name       = port.value.name
+        port       = port.value.port
+        target_port = port.value.target_port
+      }
     }
   }
 }
+
