@@ -17,13 +17,16 @@ variable "app_label" {
 variable "service_type" {
   description = "Type of the Kubernetes service"
   type        = string
-  default     = "NodePort"
+  default     = "ClusterIP"
 }
 
-variable "port" {
-  description = "Port of the service"
-  type        = number
-  default     = 80
+variable "ports" {
+  description = "List of ports for the service"
+  type = list(object({
+    name        = string
+    port        = number
+    target_port = number
+  }))
 }
 
 variable "target_port" {

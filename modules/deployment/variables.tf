@@ -53,38 +53,47 @@ variable "memory_request" {
   default     = "256Mi"
 }
 
-variable "liveness_probe_path" {
-  description = "Path to check for liveness probe"
-  type        = string
-  default     = "/"
-}
+# variable "liveness_probe_path" {
+#   description = "Path to check for liveness probe"
+#   type        = string
+#   default     = "/"
+# }
+#
+# variable "liveness_initial_delay_seconds" {
+#   description = "Initial delay for liveness probe"
+#   type        = number
+#   default     = 10
+# }
+#
+# variable "liveness_period_seconds" {
+#   description = "Period for liveness probe checks"
+#   type        = number
+#   default     = 5
+# }
+#
+# variable "readiness_probe_path" {
+#   description = "Path to check for readiness probe"
+#   type        = string
+#   default     = "/"
+# }
+#
+# variable "readiness_initial_delay_seconds" {
+#   description = "Initial delay for readiness probe"
+#   type        = number
+#   default     = 5
+# }
+#
+# variable "readiness_period_seconds" {
+#   description = "Period for readiness probe checks"
+#   type        = number
+#   default     = 5
+# }
 
-variable "liveness_initial_delay_seconds" {
-  description = "Initial delay for liveness probe"
-  type        = number
-  default     = 10
-}
-
-variable "liveness_period_seconds" {
-  description = "Period for liveness probe checks"
-  type        = number
-  default     = 5
-}
-
-variable "readiness_probe_path" {
-  description = "Path to check for readiness probe"
-  type        = string
-  default     = "/"
-}
-
-variable "readiness_initial_delay_seconds" {
-  description = "Initial delay for readiness probe"
-  type        = number
-  default     = 5
-}
-
-variable "readiness_period_seconds" {
-  description = "Period for readiness probe checks"
-  type        = number
-  default     = 5
+variable "environment" {
+  description = "List of environment variables for the deployment"
+  type = list(object({
+    name  = string
+    value = string
+  }))
+  default = []
 }

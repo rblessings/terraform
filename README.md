@@ -1,5 +1,15 @@
 # Terraform - Advanced Features and Best Practices
 
+---
+
+The project being deployed to the Kubernetes cluster is located in my
+repository: [https://github.com/rblessings/urlradar](https://github.com/rblessings/urlradar).
+
+**For a detailed understanding of the project's direction and planned features, please refer to the open issues.**
+
+
+---
+
 This repository contains a Terraform project where I am experimenting with advanced features, best practices, and
 setting up a GitHub CI/CD pipeline using GitHub Actions. The goal is to create an infrastructure-as-code (IaC) solution
 that adheres to the latest standards in Terraform and integrates seamlessly with CI/CD workflows. Additionally, the
