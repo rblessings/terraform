@@ -1,3 +1,13 @@
+variable "external_ip" {
+  type        = string
+  description = "The external IP of the development environment, used to access the Kubernetes control plane and other cluster services."
+
+  validation {
+    condition     = var.external_ip != null && var.external_ip != 0
+    error_message = "The 'external_ip' variable must be a valid, non-null IP address."
+  }
+}
+
 variable "control_plane_node_host" {
   type        = string
   description = "URL of the control plane node, including protocol, IP address, and optional port."

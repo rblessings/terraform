@@ -13,13 +13,3 @@ provider "helm" {
 output "urlradar_svc_name" {
   value = module.urlradar_svc.service_name
 }
-
-# output "grafana_url" {
-#   value = "http://<external-ip>:32000"
-#   description = "Access Grafana using this URL"
-# }
-#
-# output "prometheus_url" {
-#   value       = "http://prometheus-server.monitoring.svc.cluster.local"
-#   description = "Prometheus endpoint in the cluster"
-# }
