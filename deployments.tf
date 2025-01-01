@@ -5,18 +5,18 @@ module "urlradar_deployment" {
   image          = "rblessings/urlradar:latest"
   container_name = "urlradar"
 
-  # TODO At the moment, URLradar is not stateless compliant (see README.md for details and progress).
-  #  This limits demos to one pod.
+  # TODO: URLradar is currently not stateless-compliant. Refer to README.md for ongoing work in this area.
+  #       This constraint restricts demos to a single pod configuration.
   replicas       = 1
   container_port = 8080
 
-  # Increase memory limit and request to 1GB
-  memory_limit   = "1Gi" # Set memory limit to 1 GB
-  memory_request = "1Gi" # Set memory request to 1 GB
+  # Adjusting memory limits and requests to 1 GB
+  memory_limit   = "1Gi"
+  memory_request = "1Gi"
 
-  # Set CPU limits and requests
-  cpu_request = "250m" # 250m CPU (quarter of one CPU core)
-  cpu_limit   = "4"    # 4 CPU cores (unrealistically high, but practically unlimited)
+  # Setting CPU resource allocation
+  cpu_request = "250m" # Allocate a quarter of a CPU core
+  cpu_limit   = "4"    # Cap at 4 CPU cores to handle spikes, though this is generously high
 
   # Health checks
   # liveness_probe_path             = "/actuator/health"
@@ -28,7 +28,9 @@ module "urlradar_deployment" {
 
   environment = [
     {
-      name  = "SPRING_DATA_MONGODB_URI"
+      name = "SPRING_DATA_MONGODB_URI"
+
+      # TODO: Integrate Vault or Kubernetes Secrets for secure credential retrieval
       value = "mongodb://root:secret@mongodb-svc:27017/urlradar?authSource=admin"
     },
     {
@@ -49,7 +51,7 @@ module "urlradar_deployment" {
     },
     {
       name  = "SPRING_ELASTICSEARCH_PASSWORD"
-      value = "secret"
+      value = "secret" # TODO: Integrate Vault or Kubernetes Secrets for secure password management
     }
   ]
 
@@ -100,7 +102,7 @@ module "mongodb_statefulset" {
     },
     {
       name  = "MONGO_INITDB_ROOT_PASSWORD"
-      value = "secret" # TODO: Store Secret in Secure Vault or Kubernetes Secret
+      value = "secret" # TODO: Move this to a secure Vault or Kubernetes Secret
     },
     {
       name  = "MONGO_INITDB_DATABASE"
@@ -112,9 +114,9 @@ module "mongodb_statefulset" {
     env = "dev"
   }
 
-  pv_storage = "20Gi"
+  pv_storage  = "20Gi"
   pvc_storage = "10Gi"
-  mount_path = "/data/db"
+  mount_path  = "/data/db"
 }
 
 module "redis_statefulset" {
@@ -142,9 +144,9 @@ module "redis_statefulset" {
     env = "dev"
   }
 
-  pv_storage = "5Gi"
+  pv_storage  = "5Gi"
   pvc_storage = "2Gi"
-  mount_path = "/data"
+  mount_path  = "/data"
 }
 
 module "kafka_statefulset" {
@@ -229,9 +231,9 @@ module "kafka_statefulset" {
     env = "dev"
   }
 
-  pv_storage = "20Gi"
+  pv_storage  = "20Gi"
   pvc_storage = "10Gi"
-  # mount_path = "/var/lib/kafka/data"
+  # mount_path = "/var/lib/kafka/data" # TODO: Finalize the mount path configuration
 }
 
 module "elasticsearch_statefulset" {
@@ -256,7 +258,7 @@ module "elasticsearch_statefulset" {
   environment = [
     {
       name  = "ELASTIC_PASSWORD"
-      value = "secret" # TODO: Store Secret in Secure Vault or Kubernetes Secret
+      value = "secret" # TODO: Leverage Vault or Kubernetes Secrets for secure password management
     },
     {
       name  = "discovery.type"
@@ -272,7 +274,7 @@ module "elasticsearch_statefulset" {
     env = "dev"
   }
 
-  pv_storage = "20Gi"
+  pv_storage  = "20Gi"
   pvc_storage = "10Gi"
-  # mount_path = "/usr/share/elasticsearch/data"
+  # mount_path = "/usr/share/elasticsearch/data" # TODO: Finalize the mount path configuration
 }

@@ -1,7 +1,7 @@
 module "urlradar_svc" {
-  source      = "./modules/service"
-  name        = "urlradar-svc"
-  app_label   = module.urlradar_deployment.deployment_app_label
+  source       = "./modules/service"
+  name         = "urlradar-svc"
+  app_label    = module.urlradar_deployment.deployment_app_label
   service_type = "NodePort"
 
   ports = [
@@ -18,9 +18,9 @@ module "urlradar_svc" {
 }
 
 module "mongodb_svc" {
-  source      = "./modules/service"
-  name        = "mongodb-svc"
-  app_label   = module.mongodb_statefulset.statefulset_name
+  source    = "./modules/service"
+  name      = "mongodb-svc"
+  app_label = module.mongodb_statefulset.statefulset_name
 
   ports = [
     {
@@ -36,9 +36,9 @@ module "mongodb_svc" {
 }
 
 module "redis_svc" {
-  source      = "./modules/service"
-  name        = "redis-svc"
-  app_label   = module.redis_statefulset.statefulset_name
+  source    = "./modules/service"
+  name      = "redis-svc"
+  app_label = module.redis_statefulset.statefulset_name
 
   ports = [
     {
@@ -54,9 +54,9 @@ module "redis_svc" {
 }
 
 module "kafka_svc" {
-  source      = "./modules/service"
-  name        = "kafka-svc"
-  app_label   = module.kafka_statefulset.statefulset_name
+  source    = "./modules/service"
+  name      = "kafka-svc"
+  app_label = module.kafka_statefulset.statefulset_name
 
   ports = [
     {
@@ -72,19 +72,19 @@ module "kafka_svc" {
 }
 
 module "elasticsearch_svc" {
-  source      = "./modules/service"
-  name        = "elasticsearch-svc"
-  app_label   = module.elasticsearch_statefulset.statefulset_name
+  source    = "./modules/service"
+  name      = "elasticsearch-svc"
+  app_label = module.elasticsearch_statefulset.statefulset_name
 
   ports = [
     {
-      name       = "http"
-      port       = 9200
+      name        = "http"
+      port        = 9200
       target_port = 9200
     },
     {
-      name       = "transport"
-      port       = 9300
+      name        = "transport"
+      port        = 9300
       target_port = 9300
     }
   ]
