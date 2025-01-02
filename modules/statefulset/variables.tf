@@ -24,7 +24,6 @@ variable "pv_access_modes" {
 variable "pv_path" {
   type        = string
   description = "The host path for the PersistentVolume."
-  default     = "/mnt/data/mongodb"
 }
 
 variable "pv_storage_class" {
@@ -125,5 +124,4 @@ variable "environment" {
 variable "mount_path" {
   type        = string
   description = "The path inside the container where the volume will be mounted."
-  default     = "/data/db"
 }

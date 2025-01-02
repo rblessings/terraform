@@ -116,6 +116,7 @@ module "mongodb_statefulset" {
 
   pv_storage  = "20Gi"
   pvc_storage = "10Gi"
+  pv_path     = "/mnt/data/mongodb-logs"
   mount_path  = "/data/db"
 }
 
@@ -146,6 +147,7 @@ module "redis_statefulset" {
 
   pv_storage  = "5Gi"
   pvc_storage = "2Gi"
+  pv_path     = "/mnt/data/redis-logs"
   mount_path  = "/data"
 }
 
@@ -219,7 +221,7 @@ module "kafka_statefulset" {
     },
     {
       name  = "KAFKA_LOG_DIRS"
-      value = "/var/lib/kafka/data"
+      value = "/mnt/data/kafka-logs"
     },
     {
       name  = "KAFKA_CLUSTER_ID"
@@ -233,7 +235,8 @@ module "kafka_statefulset" {
 
   pv_storage  = "20Gi"
   pvc_storage = "10Gi"
-  # mount_path = "/var/lib/kafka/data" # TODO: Finalize the mount path configuration
+  pv_path     = "/mnt/data/kafka-logs"
+  mount_path  = "/mnt/data/kafka-logs"
 }
 
 module "elasticsearch_statefulset" {
@@ -276,5 +279,6 @@ module "elasticsearch_statefulset" {
 
   pv_storage  = "20Gi"
   pvc_storage = "10Gi"
-  # mount_path = "/usr/share/elasticsearch/data" # TODO: Finalize the mount path configuration
+  pv_path     = "/mnt/data/elasticsearch-logs"
+  mount_path  = "/usr/share/elasticsearch/data"
 }
