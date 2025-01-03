@@ -26,9 +26,6 @@ infrastructures.
 - [Features](#features)
 - [Prerequisites](#prerequisites)
 - [Usage](#usage)
-    - [Setup](#setup)
-    - [Running Terraform](#running-terraform)
-    - [GitHub Actions Pipeline](#github-actions-pipeline)
 - [License](#license)
 
 ## Overview

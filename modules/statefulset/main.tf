@@ -13,6 +13,11 @@ resource "kubernetes_persistent_volume" "this" {
 
     access_modes = var.pv_access_modes
 
+    # Note: HostPath volumes are not recommended for production as they are tied to a specific node's filesystem. For AWS-based production environments, consider using:
+    # - **Amazon EBS (Elastic Block Store)**: for persistent block storage, ideal for single-node access with Kubernetes EBS CSI Driver.
+    # - **Amazon EFS (Elastic File System)**: for shared, scalable file storage accessible from multiple nodes.
+    # - **Amazon S3**: for object storage, integrated with tools like MinIO or S3 provisioner in Kubernetes for scalable object storage.
+    # These alternatives provide better portability, durability, and scalability across nodes and availability zones.
     persistent_volume_source {
       host_path {
         path = var.pv_path # Ensure this path exists on the node
@@ -35,9 +40,9 @@ resource "kubernetes_persistent_volume_claim" "this" {
       }
     }
 
-    access_modes = var.pvc_access_modes
+    access_modes       = var.pvc_access_modes
     storage_class_name = var.pvc_storage_class
-    volume_name = kubernetes_persistent_volume.this.metadata[0].name
+    volume_name        = kubernetes_persistent_volume.this.metadata[0].name
   }
 }
 
