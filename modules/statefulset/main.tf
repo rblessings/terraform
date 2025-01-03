@@ -2,7 +2,7 @@ resource "kubernetes_persistent_volume" "this" {
   metadata {
     name = "${var.name}-pv"
     labels = merge(var.labels, {
-      type = "hostpath"
+      type = "hostpath" # Label to ensure PVC binds to the correct PV
     })
   }
 
@@ -15,7 +15,7 @@ resource "kubernetes_persistent_volume" "this" {
 
     persistent_volume_source {
       host_path {
-        path = var.pv_path
+        path = var.pv_path # Ensure this path exists on the node
       }
     }
 
@@ -36,14 +36,8 @@ resource "kubernetes_persistent_volume_claim" "this" {
     }
 
     access_modes = var.pvc_access_modes
-
-    selector {
-      match_labels = merge(var.labels, {
-        type = "hostpath"
-      })
-    }
-
     storage_class_name = var.pvc_storage_class
+    volume_name = kubernetes_persistent_volume.this.metadata[0].name
   }
 }
 
@@ -77,7 +71,7 @@ resource "kubernetes_stateful_set" "this" {
           image   = "busybox"
           command = ["/bin/sh", "-c", "chown -R 1000:1000 ${var.mount_path}"]
           volume_mount {
-            mount_path = var.mount_path
+            mount_path = var.mount_path # Consistent path for mounting volume
             name       = "${var.name}-storage"
           }
         }

@@ -28,9 +28,3 @@ variable "ports" {
     target_port = number
   }))
 }
-
-variable "target_port" {
-  description = "Port on the container that the service will forward to"
-  type        = number
-  default     = 80
-}

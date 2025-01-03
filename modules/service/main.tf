@@ -21,4 +21,3 @@ resource "kubernetes_service" "this" {
     }
   }
 }
-
