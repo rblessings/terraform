@@ -10,13 +10,11 @@ module "urlradar_deployment" {
   replicas       = 1
   container_port = 8080
 
-  # Adjusting memory limits and requests to 1 GB
-  memory_limit   = "1Gi"
-  memory_request = "1Gi"
+  cpu_request = "0.5" # Lowering CPU request to 0.5 CPU
+  cpu_limit   = "2"   # Lowering CPU limit to 2 CPUs
 
-  # Setting CPU resource allocation
-  cpu_request = "250m" # Allocate a quarter of a CPU core
-  cpu_limit   = "4"    # Cap at 4 CPU cores to handle spikes, though this is generously high
+  memory_request = "1Gi" # Lowering memory request to 1Gi
+  memory_limit   = "2Gi" # Lowering memory limit to 2Gi
 
   # Health checks
   # liveness_probe_path             = "/actuator/health"
@@ -44,22 +42,13 @@ module "urlradar_deployment" {
     {
       name  = "SPRING_KAFKA_BOOTSTRAP_SERVERS"
       value = "kafka-svc:9092"
-    },
-    {
-      name  = "SPRING_ELASTICSEARCH_URIS"
-      value = "http://elasticsearch-svc:9200"
-    },
-    {
-      name  = "SPRING_ELASTICSEARCH_PASSWORD"
-      value = "secret" # TODO: Integrate Vault or Kubernetes Secrets for secure password management
     }
   ]
 
   depends_on = [
     module.mongodb_statefulset,
     module.redis_statefulset,
-    module.kafka_statefulset,
-    module.elasticsearch_statefulset,
+    module.kafka_statefulset
   ]
 }
 
@@ -72,14 +61,14 @@ module "mongodb_statefulset" {
   replicas       = 1
   container_port = 27017
 
-  resource_limits = {
-    cpu    = "1"
-    memory = "2Gi"
+  resource_requests = {
+    cpu    = "1"   # Lowering CPU request to 1
+    memory = "1Gi" # Lowering memory request to 1Gi
   }
 
-  resource_requests = {
-    cpu    = "500m"
-    memory = "1Gi"
+  resource_limits = {
+    cpu    = "1"   # Lowering CPU limit to 1
+    memory = "1Gi" # Lowering memory limit to 1Gi
   }
 
   # Health checks
@@ -114,10 +103,10 @@ module "mongodb_statefulset" {
     env = "dev"
   }
 
+  mount_path  = "/data/db"
+  pv_path     = "/mnt/data/mongodb-logs"
   pv_storage  = "20Gi"
   pvc_storage = "10Gi"
-  pv_path     = "/mnt/data/mongodb-logs"
-  mount_path  = "/data/db"
 }
 
 module "redis_statefulset" {
@@ -129,14 +118,14 @@ module "redis_statefulset" {
   replicas       = 1
   container_port = 6379
 
-  resource_limits = {
-    cpu    = "500m"
-    memory = "1Gi"
+  resource_requests = {
+    cpu    = "1"   # Lowering CPU request to 1
+    memory = "1Gi" # Lowering memory request to 1Gi
   }
 
-  resource_requests = {
-    cpu    = "250m"
-    memory = "512Mi"
+  resource_limits = {
+    cpu    = "1"   # Lowering CPU limit to 1
+    memory = "1Gi" # Lowering memory limit to 1Gi
   }
 
   environment = []
@@ -145,10 +134,10 @@ module "redis_statefulset" {
     env = "dev"
   }
 
+  mount_path  = "/data"
+  pv_path     = "/mnt/data/redis-logs"
   pv_storage  = "5Gi"
   pvc_storage = "2Gi"
-  pv_path     = "/mnt/data/redis-logs"
-  mount_path  = "/data"
 }
 
 module "kafka_statefulset" {
@@ -160,14 +149,14 @@ module "kafka_statefulset" {
   replicas       = 1
   container_port = 9092
 
-  resource_limits = {
-    cpu    = "1"
-    memory = "2Gi"
+  resource_requests = {
+    cpu    = "2"   # Lowering CPU request to 2
+    memory = "2Gi" # Lowering memory request to 2Gi
   }
 
-  resource_requests = {
-    cpu    = "500m"
-    memory = "1Gi"
+  resource_limits = {
+    cpu    = "2"   # Lowering CPU limit to 2
+    memory = "2Gi" # Lowering memory limit to 2Gi
   }
 
   environment = [
@@ -219,10 +208,10 @@ module "kafka_statefulset" {
       name  = "KAFKA_TRANSACTION_STATE_LOG_MIN_ISR"
       value = "1"
     },
-    {
-      name  = "KAFKA_LOG_DIRS"
-      value = "/mnt/data/kafka-logs"
-    },
+    # {
+    #   name  = "KAFKA_LOG_DIRS"
+    #   value = "/var/lib/kafka/data"
+    # },
     {
       name  = "KAFKA_CLUSTER_ID"
       value = "urlradar-27-12-2024"
@@ -233,52 +222,8 @@ module "kafka_statefulset" {
     env = "dev"
   }
 
-  pv_storage  = "20Gi"
-  pvc_storage = "10Gi"
+  mount_path  = "/var/lib/kafka/data"
   pv_path     = "/mnt/data/kafka-logs"
-  mount_path  = "/mnt/data/kafka-logs"
-}
-
-module "elasticsearch_statefulset" {
-  source         = "./modules/statefulset"
-  name           = "elasticsearch"
-  app_label      = "elasticsearch"
-  image          = "docker.elastic.co/elasticsearch/elasticsearch:8.17.0"
-  container_name = "elasticsearch"
-  replicas       = 1
-  container_port = 9200
-
-  resource_limits = {
-    cpu    = "1"
-    memory = "2Gi"
-  }
-
-  resource_requests = {
-    cpu    = "500m"
-    memory = "1Gi"
-  }
-
-  environment = [
-    {
-      name  = "ELASTIC_PASSWORD"
-      value = "secret" # TODO: Leverage Vault or Kubernetes Secrets for secure password management
-    },
-    {
-      name  = "discovery.type"
-      value = "single-node"
-    },
-    {
-      name  = "xpack.security.enabled"
-      value = "false"
-    }
-  ]
-
-  labels = {
-    env = "dev"
-  }
-
   pv_storage  = "20Gi"
   pvc_storage = "10Gi"
-  pv_path     = "/mnt/data/elasticsearch-logs"
-  mount_path  = "/usr/share/elasticsearch/data"
 }

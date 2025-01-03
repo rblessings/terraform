@@ -12,7 +12,7 @@ variable "labels" {
 variable "pv_storage" {
   type        = string
   description = "The storage size for the PersistentVolume."
-  default     = "10Gi"
+  default     = "20Gi"
 }
 
 variable "pv_access_modes" {
@@ -21,6 +21,7 @@ variable "pv_access_modes" {
   default     = ["ReadWriteOnce"]
 }
 
+# corresponds to a directory on the node where data will persist
 variable "pv_path" {
   type        = string
   description = "The host path for the PersistentVolume."
@@ -35,7 +36,7 @@ variable "pv_storage_class" {
 variable "pvc_storage" {
   type        = string
   description = "The storage size for the PersistentVolumeClaim."
-  default     = "5Gi"
+  default     = "20Gi"
 }
 
 variable "pvc_access_modes" {

@@ -70,27 +70,3 @@ module "kafka_svc" {
     module.kafka_statefulset
   ]
 }
-
-module "elasticsearch_svc" {
-  source    = "./modules/service"
-  name      = "elasticsearch-svc"
-  app_label = module.elasticsearch_statefulset.statefulset_name
-
-  ports = [
-    {
-      name        = "http"
-      port        = 9200
-      target_port = 9200
-    },
-    {
-      name        = "transport"
-      port        = 9300
-      target_port = 9300
-    }
-  ]
-
-  depends_on = [
-    module.elasticsearch_statefulset
-  ]
-}
-
