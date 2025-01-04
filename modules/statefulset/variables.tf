@@ -9,48 +9,6 @@ variable "labels" {
   default     = {}
 }
 
-variable "pv_storage" {
-  type        = string
-  description = "The storage size for the PersistentVolume."
-  default     = "20Gi"
-}
-
-variable "pv_access_modes" {
-  type        = list(string)
-  description = "The access modes for the PersistentVolume."
-  default     = ["ReadWriteOnce"]
-}
-
-# corresponds to a directory on the node where data will persist
-variable "pv_path" {
-  type        = string
-  description = "The host path for the PersistentVolume."
-}
-
-variable "pv_storage_class" {
-  type        = string
-  description = "The storage class for the PersistentVolume."
-  default     = "slow"
-}
-
-variable "pvc_storage" {
-  type        = string
-  description = "The storage size for the PersistentVolumeClaim."
-  default     = "20Gi"
-}
-
-variable "pvc_access_modes" {
-  type        = list(string)
-  description = "The access modes for the PersistentVolumeClaim."
-  default     = ["ReadWriteOnce"]
-}
-
-variable "pvc_storage_class" {
-  type        = string
-  description = "The storage class for the PersistentVolumeClaim."
-  default     = "slow"
-}
-
 variable "replicas" {
   type        = number
   description = "The number of replicas in the StatefulSet."
@@ -135,4 +93,52 @@ variable "environment" {
 variable "mount_path" {
   type        = string
   description = "The path inside the container where the volume will be mounted."
+}
+
+variable "pv_storage_class" {
+  type        = string
+  description = "The storage class for the PersistentVolume."
+  default     = "slow"
+}
+
+variable "pvc_storage" {
+  type        = string
+  description = "The storage size for the PersistentVolumeClaim."
+  default     = "20Gi"
+}
+
+variable "pvc_access_modes" {
+  type        = list(string)
+  description = "The access modes for the PersistentVolumeClaim."
+  default     = ["ReadWriteOnce"]
+}
+
+variable "pvc_storage_class" {
+  type        = string
+  description = "The storage class for the PersistentVolumeClaim."
+  default     = "slow"
+}
+
+variable "pv_storage" {
+  type        = string
+  description = "The storage size for the PersistentVolume."
+  default     = "20Gi"
+}
+
+variable "pv_access_modes" {
+  type        = list(string)
+  description = "The access modes for the PersistentVolume."
+  default     = ["ReadWriteOnce"]
+}
+
+# corresponds to a directory on the node where data will persist
+variable "pv_path" {
+  type        = string
+  description = "The host path for the PersistentVolume."
+}
+
+variable "pvc_namespace" {
+  type        = string
+  description = "The name of the PVC namespace."
+  default     = "default"
 }
