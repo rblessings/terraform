@@ -26,7 +26,6 @@ variable "replicas" {
 variable "container_port" {
   description = "Port exposed by the container"
   type        = number
-  default     = 80
 }
 
 variable "cpu_limit" {
@@ -53,41 +52,33 @@ variable "memory_request" {
   default     = "256Mi"
 }
 
-# variable "liveness_probe_path" {
-#   description = "Path to check for liveness probe"
-#   type        = string
-#   default     = "/"
-# }
-#
-# variable "liveness_initial_delay_seconds" {
-#   description = "Initial delay for liveness probe"
-#   type        = number
-#   default     = 10
-# }
-#
-# variable "liveness_period_seconds" {
-#   description = "Period for liveness probe checks"
-#   type        = number
-#   default     = 5
-# }
-#
-# variable "readiness_probe_path" {
-#   description = "Path to check for readiness probe"
-#   type        = string
-#   default     = "/"
-# }
-#
-# variable "readiness_initial_delay_seconds" {
-#   description = "Initial delay for readiness probe"
-#   type        = number
-#   default     = 5
-# }
-#
-# variable "readiness_period_seconds" {
-#   description = "Period for readiness probe checks"
-#   type        = number
-#   default     = 5
-# }
+variable "liveness_probe" {
+  description = "Liveness probe configuration."
+  type = object({
+    exec_command          = optional(list(string))
+    initial_delay_seconds = number
+    period_seconds        = number
+    http_get = optional(object({
+      path = string
+      port = number
+    }))
+  })
+  default = null
+}
+
+variable "readiness_probe" {
+  description = "Readiness probe configuration."
+  type = object({
+    exec_command          = optional(list(string))
+    initial_delay_seconds = number
+    period_seconds        = number
+    http_get = optional(object({
+      path = string
+      port = number
+    }))
+  })
+  default = null
+}
 
 variable "environment" {
   description = "List of environment variables for the deployment"

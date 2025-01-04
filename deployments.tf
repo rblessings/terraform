@@ -16,13 +16,25 @@ module "urlradar_deployment" {
   memory_request = "1Gi" # Lowering memory request to 1Gi
   memory_limit   = "2Gi" # Lowering memory limit to 2Gi
 
-  # Health checks
-  # liveness_probe_path             = "/actuator/health"
-  # liveness_initial_delay_seconds  = 60
-  # liveness_period_seconds         = 15
-  # readiness_probe_path            = "/actuator/health"
-  # readiness_initial_delay_seconds = 60
-  # readiness_period_seconds        = 15
+  # Health checks for UrlRadar: Liveness and readiness probes monitor the application’s health
+  # and ensure that dependencies (MongoDB, Kafka, Redis, etc.) are available via '/actuator/health'.
+  liveness_probe = {
+    initial_delay_seconds = 90
+    period_seconds        = 30
+    http_get = {
+      path = "/actuator/health"
+      port = 8080
+    }
+  }
+
+  readiness_probe = {
+    initial_delay_seconds = 90
+    period_seconds        = 30
+    http_get = {
+      path = "/actuator/health"
+      port = 8080
+    }
+  }
 
   environment = [
     {
@@ -72,17 +84,23 @@ module "mongodb_statefulset" {
   }
 
   # Health checks
-  # liveness_probe = {
-  #   exec_command          = ["mongosh", "--eval", "db.adminCommand('ping').ok"]
-  #   initial_delay_seconds = 60
-  #   period_seconds        = 15
-  # }
-  #
-  # readiness_probe = {
-  #   exec_command          = ["mongosh", "--eval", "db.adminCommand('ping').ok"]
-  #   initial_delay_seconds = 60
-  #   period_seconds        = 15
-  # }
+  liveness_probe = {
+    initial_delay_seconds = 90
+    period_seconds        = 30
+    timeout_seconds       = 3
+    exec_command = [
+      "mongosh", "--eval", "db.adminCommand('ping').ok"
+    ]
+  }
+
+  readiness_probe = {
+    initial_delay_seconds = 90
+    period_seconds        = 30
+    timeout_seconds       = 3
+    exec_command = [
+      "mongosh", "--eval", "db.adminCommand('ping').ok"
+    ]
+  }
 
   environment = [
     {
@@ -109,37 +127,6 @@ module "mongodb_statefulset" {
   pvc_storage = "10Gi"
 }
 
-module "redis_statefulset" {
-  source         = "./modules/statefulset"
-  name           = "redis"
-  app_label      = "redis"
-  image          = "redis:latest"
-  container_name = "redis"
-  replicas       = 1
-  container_port = 6379
-
-  resource_requests = {
-    cpu    = "1"   # Lowering CPU request to 1
-    memory = "1Gi" # Lowering memory request to 1Gi
-  }
-
-  resource_limits = {
-    cpu    = "1"   # Lowering CPU limit to 1
-    memory = "1Gi" # Lowering memory limit to 1Gi
-  }
-
-  environment = []
-
-  labels = {
-    env = "dev"
-  }
-
-  mount_path  = "/data"
-  pv_path     = "/mnt/data/redis-logs"
-  pv_storage  = "5Gi"
-  pvc_storage = "2Gi"
-}
-
 module "kafka_statefulset" {
   source         = "./modules/statefulset"
   name           = "kafka"
@@ -157,6 +144,25 @@ module "kafka_statefulset" {
   resource_limits = {
     cpu    = "2"   # Lowering CPU limit to 2
     memory = "2Gi" # Lowering memory limit to 2Gi
+  }
+
+  # Health checks for Kafka: liveness and readiness probes ensure Kafka is running and responsive by listing topics.
+  liveness_probe = {
+    initial_delay_seconds = 90
+    period_seconds        = 30
+    timeout_seconds       = 5
+    exec_command = [
+      "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "0.0.0.0:9092", "--list"
+    ]
+  }
+
+  readiness_probe = {
+    initial_delay_seconds = 90
+    period_seconds        = 30
+    timeout_seconds       = 5
+    exec_command = [
+      "/opt/kafka/bin/kafka-topics.sh", "--bootstrap-server", "0.0.0.0:9092", "--list"
+    ]
   }
 
   environment = [
@@ -226,4 +232,54 @@ module "kafka_statefulset" {
   pv_path     = "/mnt/data/kafka-logs"
   pv_storage  = "20Gi"
   pvc_storage = "10Gi"
+}
+
+module "redis_statefulset" {
+  source         = "./modules/statefulset"
+  name           = "redis"
+  app_label      = "redis"
+  image          = "redis:latest"
+  container_name = "redis"
+  replicas       = 1
+  container_port = 6379
+
+  resource_requests = {
+    cpu    = "1"   # Lowering CPU request to 1
+    memory = "1Gi" # Lowering memory request to 1Gi
+  }
+
+  resource_limits = {
+    cpu    = "1"   # Lowering CPU limit to 1
+    memory = "1Gi" # Lowering memory limit to 1Gi
+  }
+
+  # Health checks for Redis: liveness and readiness probes ensure Redis is up and responsive via 'PING' command.
+  liveness_probe = {
+    initial_delay_seconds = 60
+    period_seconds        = 30
+    timeout_seconds       = 3
+    exec_command = [
+      "redis-cli", "PING"
+    ]
+  }
+
+  readiness_probe = {
+    initial_delay_seconds = 60
+    period_seconds        = 30
+    timeout_seconds       = 3
+    exec_command = [
+      "redis-cli", "PING"
+    ]
+  }
+
+  environment = []
+
+  labels = {
+    env = "dev"
+  }
+
+  mount_path  = "/data"
+  pv_path     = "/mnt/data/redis-logs"
+  pv_storage  = "5Gi"
+  pvc_storage = "2Gi"
 }

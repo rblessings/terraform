@@ -1,3 +1,5 @@
+# TODO: Implement Slack notifications for failed builds to alert the team in the event of pipeline failures.
+
 name: Terraform Validation
 
 on:
@@ -9,6 +11,8 @@ on:
       - main
 
 jobs:
+
+  # Run Super Linter to validate code quality and enforce style guidelines
   superlinter:
     name: Run Super Linter for Code Validation
     runs-on: ubuntu-latest
@@ -30,6 +34,7 @@ jobs:
           VALIDATE_MD: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+  # Validate and lint Terraform configuration, ensuring proper syntax, code quality, and security best practices.
   terraform:
     name: Validate and Lint Terraform Configuration
     runs-on: ubuntu-latest
