@@ -1,44 +1,20 @@
-resource "kubernetes_persistent_volume" "this" {
-  metadata {
-    name = "${var.name}-pv"
-    labels = merge(var.labels, {
-      type = "hostpath" # Label to ensure PVC binds to the correct PV
-    })
-  }
+module "kubernetes_persistent_volume_claim" {
+  source = "../../modules/pvc"
+  labels = var.labels
 
-  spec {
-    capacity = {
-      storage = var.pv_storage
-    }
+  # Persistent Volume (PV) configuration
+  pv_name          = format("%s-pv", var.name)
+  pv_storage       = var.pv_storage
+  pv_access_modes  = var.pv_access_modes
+  pv_path          = var.pv_path
+  pv_storage_class = var.pv_storage_class
 
-    access_modes = var.pv_access_modes
-
-    persistent_volume_source {
-      host_path {
-        path = var.pv_path # Ensure this path exists on the node
-      }
-    }
-
-    storage_class_name = var.pv_storage_class
-  }
-}
-
-resource "kubernetes_persistent_volume_claim" "this" {
-  metadata {
-    name = "${var.name}-pvc"
-  }
-
-  spec {
-    resources {
-      requests = {
-        storage = var.pvc_storage
-      }
-    }
-
-    access_modes       = var.pvc_access_modes
-    storage_class_name = var.pvc_storage_class
-    volume_name        = kubernetes_persistent_volume.this.metadata[0].name
-  }
+  # Persistent Volume Claim (PVC) configuration
+  pvc_namespace     = var.pvc_namespace
+  pvc_storage       = var.pvc_storage
+  pvc_access_modes  = var.pvc_access_modes
+  pvc_storage_class = var.pvc_storage_class
+  pvc_name          = format("%s-pvc", var.name)
 }
 
 resource "kubernetes_stateful_set" "this" {
@@ -164,7 +140,7 @@ resource "kubernetes_stateful_set" "this" {
           name = "${var.name}-storage"
 
           persistent_volume_claim {
-            claim_name = kubernetes_persistent_volume_claim.this.metadata[0].name
+            claim_name = module.kubernetes_persistent_volume_claim.pvc_name
           }
         }
       }

@@ -1,27 +1,13 @@
 /*
-  This resource definition demonstrates one method for deploying a workload on a Kubernetes cluster
-  using the Terraform Kubernetes provider.
+  Deploys a workload on Kubernetes using Terraform; suitable for simple workloads.
+  For complex setups, use existing Kubernetes YAML manifests.
 
-  While this approach works well for simple workloads, it is generally recommended to use pre-existing
-  Kubernetes YAML manifests for more complex or production-grade applications. These manifests are often
-  created and maintained by infrastructure teams to ensure consistency and alignment with best practices.
-
-  Example of using a Kubernetes manifest resource:
-
-  provider "kubernetes" {
-    // Configure the Kubernetes provider with the necessary credentials and cluster details
-  }
-
+  Example:
   resource "kubernetes_manifest" "example" {
     provider = kubernetes
     manifest = yamldecode(file("${path.module}/deployment.yaml"))
   }
-
-  This approach allows you to directly apply Kubernetes YAML configuration files, which is particularly
-  useful in environments where manifests are already in use, need to be version-controlled, or must be
-  maintained separately from Terraform configuration.
-*/
-
+ */
 resource "kubernetes_deployment" "this" {
   metadata {
     name = var.name

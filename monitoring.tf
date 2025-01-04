@@ -4,44 +4,24 @@ resource "kubernetes_namespace" "monitoring" {
   }
 }
 
-resource "kubernetes_persistent_volume" "prometheus_alertmanager_pv" {
-  metadata {
-    name = "prometheus-alertmanager-pv"
-  }
+# Creating a Persistent Volume (PV) and a Persistent Volume Claim (PVC) for Prometheus
+module "kubernetes_persistent_volume_claim" {
+  source = "./modules/pvc"
+  labels = {}
 
-  spec {
-    capacity = {
-      storage = "10Gi"
-    }
+  # Persistent Volume (PV) configuration
+  pv_name          = "prometheus-alertmanager-pv"
+  pv_storage       = "10Gi"
+  pv_access_modes  = ["ReadWriteOnce"]
+  pv_path          = "/mnt/data/prometheus-alertmanager"
+  pv_storage_class = "slow"
 
-    access_modes                     = ["ReadWriteOnce"]
-    persistent_volume_reclaim_policy = "Retain"
-
-    persistent_volume_source {
-      host_path {
-        path = "/mnt/data/prometheus-alertmanager"
-      }
-    }
-  }
-}
-
-resource "kubernetes_persistent_volume_claim" "prometheus_alertmanager_pvc" {
-  metadata {
-    name      = "storage-prometheus-alertmanager-0"
-    namespace = "monitoring"
-  }
-
-  spec {
-    access_modes = ["ReadWriteOnce"]
-
-    resources {
-      requests = {
-        storage = "10Gi"
-      }
-    }
-
-    volume_name = kubernetes_persistent_volume.prometheus_alertmanager_pv.metadata[0].name
-  }
+  # Persistent Volume Claim (PVC) configuration
+  pvc_name          = "storage-prometheus-alertmanager-0"
+  pvc_namespace     = kubernetes_namespace.monitoring.metadata[0].name
+  pvc_storage       = "10Gi"
+  pvc_access_modes  = ["ReadWriteOnce"]
+  pvc_storage_class = "slow"
 }
 
 resource "helm_release" "prometheus" {
@@ -84,7 +64,8 @@ EOF
   ]
 }
 
-# TODO: Parameterize Grafana credentials (adminUser and adminPassword) and store them securely in Vault or Kubernetes Secrets.
+# TODO: Parameterize Grafana credentials (adminUser and adminPassword) and store them securely
+#  in HashiCorp Vault or Kubernetes Secrets.
 resource "helm_release" "grafana" {
   name       = "grafana"
   namespace  = kubernetes_namespace.monitoring.metadata[0].name

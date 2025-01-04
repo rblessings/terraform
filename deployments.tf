@@ -5,7 +5,7 @@ module "urlradar_deployment" {
   image          = "rblessings/urlradar:latest"
   container_name = "urlradar"
 
-  # TODO: URLradar is currently not stateless-compliant. Refer to README.md for ongoing work in this area.
+  # TODO: URLradar is currently not stateless-compliant. Refer to the README.md for ongoing work in this area.
   #       This constraint restricts demos to a single pod configuration.
   replicas       = 1
   container_port = 8080
@@ -40,7 +40,7 @@ module "urlradar_deployment" {
     {
       name = "SPRING_DATA_MONGODB_URI"
 
-      # TODO: Integrate Vault or Kubernetes Secrets for secure credential retrieval
+      # TODO: Integrate HashiCorp Vault or Kubernetes Secrets for secure credential retrieval.
       value = "mongodb://root:secret@mongodb-svc:27017/urlradar?authSource=admin"
     },
     {
@@ -109,7 +109,7 @@ module "mongodb_statefulset" {
     },
     {
       name  = "MONGO_INITDB_ROOT_PASSWORD"
-      value = "secret" # TODO: Integrate Vault or Kubernetes Secrets for secure credential retrieval
+      value = "secret" # TODO: Integrate HashiCorp Vault or Kubernetes Secrets for secure credential retrieval.
     },
     {
       name  = "MONGO_INITDB_DATABASE"
