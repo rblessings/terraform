@@ -109,7 +109,7 @@ module "mongodb_statefulset" {
     },
     {
       name  = "MONGO_INITDB_ROOT_PASSWORD"
-      value = "secret" # TODO: Move this to a secure Vault or Kubernetes Secret
+      value = "secret" # TODO: Integrate Vault or Kubernetes Secrets for secure credential retrieval
     },
     {
       name  = "MONGO_INITDB_DATABASE"
