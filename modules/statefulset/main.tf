@@ -94,27 +94,58 @@ resource "kubernetes_stateful_set" "this" {
             requests = var.resource_requests
           }
 
-          # Liveness Probe (if provided)
+          # Conditionally configure liveness probe
           dynamic "liveness_probe" {
             for_each = var.liveness_probe != null ? [var.liveness_probe] : []
             content {
-              exec {
-                command = liveness_probe.value.exec_command
+              # Use http_get if defined
+              dynamic "http_get" {
+                for_each = var.liveness_probe.http_get != null ? [var.liveness_probe.http_get] : []
+                content {
+                  path = http_get.value.path
+                  port = http_get.value.port
+                }
               }
+
+              # Use exec if defined
+              dynamic "exec" {
+                for_each = var.liveness_probe.exec_command != null ? [var.liveness_probe.exec_command] : []
+                content {
+                  command = exec.value
+                }
+              }
+
               initial_delay_seconds = liveness_probe.value.initial_delay_seconds
               period_seconds        = liveness_probe.value.period_seconds
+              timeout_seconds       = liveness_probe.value.timeout_seconds
+              # TODO: Parameterize this value to allow dynamic configuration based on use case.
             }
           }
 
-          # Readiness Probe (if provided)
+          # Conditionally configure readiness probe
           dynamic "readiness_probe" {
             for_each = var.readiness_probe != null ? [var.readiness_probe] : []
             content {
-              exec {
-                command = readiness_probe.value.exec_command
+              # Use http_get if defined
+              dynamic "http_get" {
+                for_each = var.readiness_probe.http_get != null ? [var.readiness_probe.http_get] : []
+                content {
+                  path = http_get.value.path
+                  port = http_get.value.port
+                }
               }
+
+              # Use exec if defined
+              dynamic "exec" {
+                for_each = var.readiness_probe.exec_command != null ? [var.readiness_probe.exec_command] : []
+                content {
+                  command = exec.value
+                }
+              }
+
               initial_delay_seconds = readiness_probe.value.initial_delay_seconds
               period_seconds        = readiness_probe.value.period_seconds
+              timeout_seconds       = readiness_probe.value.timeout_seconds
             }
           }
 

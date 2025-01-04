@@ -94,23 +94,33 @@ variable "resource_requests" {
 }
 
 variable "liveness_probe" {
+  description = "Liveness probe configuration."
   type = object({
-    exec_command          = list(string)
+    exec_command          = optional(list(string))
     initial_delay_seconds = number
     period_seconds        = number
+    timeout_seconds       = number
+    http_get = optional(object({
+      path = string
+      port = number
+    }))
   })
-  description = "Liveness probe configuration."
-  default     = null
+  default = null
 }
 
 variable "readiness_probe" {
+  description = "Readiness probe configuration."
   type = object({
-    exec_command          = list(string)
+    exec_command          = optional(list(string))
     initial_delay_seconds = number
     period_seconds        = number
+    timeout_seconds       = number
+    http_get = optional(object({
+      path = string
+      port = number
+    }))
   })
-  description = "Readiness probe configuration."
-  default     = null
+  default = null
 }
 
 variable "environment" {

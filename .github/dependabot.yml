@@ -1,3 +1,7 @@
+# This configuration instructs Dependabot to check for updates to all dependencies in the Terraform project
+# located in the root directory (/) once a week. It will create up to 5 pull requests simultaneously for dependency updates,
+# covering both direct and indirect dependencies.
+
 version: 2
 updates:
   - package-ecosystem: "terraform"
