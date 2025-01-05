@@ -10,12 +10,11 @@ repository: [https://github.com/rblessings/urlradar](https://github.com/rblessin
 
 ---
 
-This repository contains a Terraform project where I am experimenting with advanced features, best practices, and
-setting up a GitHub CI/CD pipeline using GitHub Actions. The goal is to create an infrastructure-as-code (IaC) solution
-that adheres to the latest standards in Terraform and integrates seamlessly with CI/CD workflows. Additionally, the
-project includes comprehensive monitoring of Kubernetes clusters using Prometheus and Grafana, providing real-time
-observability, metrics collection, and visualization, ensuring the scalability and reliability of cloud-native
-infrastructures.
+This repository showcases a Terraform project focused on advanced features, best practices, and a GitHub Actions-based
+CI/CD pipeline. The objective is to implement a modern IaC solution that aligns with Terraform's latest standards and
+integrates with CI/CD workflows. It also includes comprehensive Kubernetes monitoring with Prometheus and Grafana for
+real-time observability, metrics collection, and visualization, ensuring cloud-native infrastructure scalability and
+reliability.
 
 [![Terraform Validation](https://github.com/rblessings/terraform/actions/workflows/terraform.yml/badge.svg)](https://github.com/rblessings/terraform/actions/workflows/terraform.yml)
 [![Dependabot Updates](https://github.com/rblessings/terraform/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/rblessings/terraform/actions/workflows/dependabot/dependabot-updates)
@@ -61,7 +60,54 @@ Before using this repository, ensure that the following software is installed:
 
 ## Usage
 
-### Running Terraform
+### Kubernetes Persistent Volume Setup
+
+#### Important Note on HostPath Volumes
+
+In the current development environment, `HostPath` volumes are used for persistent storage. Ensure the specified paths
+exist on **all worker nodes** before deployment. Manually create the directories on each node.
+
+This setup is limited in scalability and high availability. A more scalable solution will be implemented before
+production deployment. For updates, refer to [issue #36](https://github.com/rblessings/terraform/issues/36).
+
+#### Setup Instructions
+
+1. **Copy the `setup_directories.sh` Script**
+
+   Transfer the script to each worker node using `scp`, or manually copy its contents:
+
+    ```bash
+      scp setup_directories.sh <username>@<node_ip>:/path/to/destination
+    ```
+
+2. Make the Script Executable
+
+   After transferring the script to the worker node(s), grant it executable permissions:
+
+   ```bash
+   chmod +x setup_directories.sh
+   ```
+
+3. Run the Script
+
+   Execute the script to create the necessary directories:
+
+   ```bash
+   ./setup_directories.sh
+   ```
+
+4. Verify the Directories
+
+   Finally, verify that the directories were created successfully with the correct permissions by listing their
+   contents:
+
+   ```bash
+      ls -lh /mnt/data/
+   ```
+
+---
+
+### Deploying the Application to a Kubernetes Cluster
 
 ```bash
 terraform plan -var-file="environments/dev.tfvars"
@@ -97,34 +143,6 @@ as pod status, node resource usage, and cluster health.
 - Click **Import** to finish the setup.
 
 The dashboard is now available, and you can start monitoring your Kubernetes cluster metrics.
-
-### Explore Kubernetes Cluster Metrics
-
-After importing the Kubernetes dashboard into Grafana, you can monitor critical metrics for cluster health and
-performance.
-
-#### Key Dashboard Metrics:
-
-1. **Cluster Health**:
-    - **API Server**: Request rate, error rate, latency.
-    - **Scheduler**: Scheduling latency, unscheduled pods.
-
-2. **Node Metrics**:
-    - **CPU Usage**: Per node and overall consumption.
-    - **Memory Usage**: Per node and total utilization.
-    - **Disk I/O**: Read/write operations per second.
-
-3. **Pod Health and Status**:
-    - **Pod Status**: Number of pods in various states.
-    - **Pod CPU and Memory Usage**: Resource consumption per pod.
-
-4. **Network Metrics**:
-    - **Network Throughput**: Traffic per pod and node.
-    - **Network Latency**: Latency between services.
-
-5. **Resource Requests and Limits**:
-    - **CPU Requests**: Allocated CPU for pods.
-    - **Memory Requests**: Allocated memory for pods.
 
 ---
 

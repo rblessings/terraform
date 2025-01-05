@@ -10,14 +10,14 @@ module "urlradar_deployment" {
   replicas       = 1
   container_port = 8080
 
-  cpu_request = "0.5" # Lowering CPU request to 0.5 CPU
-  cpu_limit   = "2"   # Lowering CPU limit to 2 CPUs
+  cpu_request = "0.5"
+  cpu_limit   = "2"
 
-  memory_request = "1Gi" # Lowering memory request to 1Gi
-  memory_limit   = "2Gi" # Lowering memory limit to 2Gi
+  memory_request = "1Gi"
+  memory_limit   = "2Gi"
 
-  # Health checks for UrlRadar: Liveness and readiness probes monitor the application’s health
-  # and ensure that dependencies (MongoDB, Kafka, Redis, etc.) are available via '/actuator/health'.
+  # Health checks for liveness and readiness probes monitor the application's health
+  # and ensure that dependencies (e.g., MongoDB, Kafka, Redis) are available.
   liveness_probe = {
     initial_delay_seconds = 90
     period_seconds        = 30
@@ -74,18 +74,19 @@ module "mongodb_statefulset" {
   container_port = 27017
 
   resource_requests = {
-    cpu    = "1"   # Lowering CPU request to 1
-    memory = "1Gi" # Lowering memory request to 1Gi
+    cpu    = "2"
+    memory = "2Gi"
   }
 
   resource_limits = {
-    cpu    = "1"   # Lowering CPU limit to 1
-    memory = "1Gi" # Lowering memory limit to 1Gi
+    cpu    = "2"
+    memory = "2Gi"
   }
 
-  # Health checks
+  # Health checks for MongoDB: Liveness and readiness probes ensure
+  # MongoDB is operational and responsive.
   liveness_probe = {
-    initial_delay_seconds = 90
+    initial_delay_seconds = 120
     period_seconds        = 30
     timeout_seconds       = 3
     exec_command = [
@@ -94,7 +95,7 @@ module "mongodb_statefulset" {
   }
 
   readiness_probe = {
-    initial_delay_seconds = 90
+    initial_delay_seconds = 120
     period_seconds        = 30
     timeout_seconds       = 3
     exec_command = [
@@ -137,16 +138,17 @@ module "kafka_statefulset" {
   container_port = 9092
 
   resource_requests = {
-    cpu    = "2"   # Lowering CPU request to 2
-    memory = "2Gi" # Lowering memory request to 2Gi
+    cpu    = "2"
+    memory = "2Gi"
   }
 
   resource_limits = {
-    cpu    = "2"   # Lowering CPU limit to 2
-    memory = "2Gi" # Lowering memory limit to 2Gi
+    cpu    = "2"
+    memory = "2Gi"
   }
 
-  # Health checks for Kafka: liveness and readiness probes ensure Kafka is running and responsive by listing topics.
+  # Health checks for Kafka: Liveness and readiness probes ensure
+  # that Kafka is running and responsive by listing topics.
   liveness_probe = {
     initial_delay_seconds = 90
     period_seconds        = 30
@@ -244,16 +246,17 @@ module "redis_statefulset" {
   container_port = 6379
 
   resource_requests = {
-    cpu    = "1"   # Lowering CPU request to 1
-    memory = "1Gi" # Lowering memory request to 1Gi
+    cpu    = "1"
+    memory = "1Gi"
   }
 
   resource_limits = {
-    cpu    = "1"   # Lowering CPU limit to 1
-    memory = "1Gi" # Lowering memory limit to 1Gi
+    cpu    = "1"
+    memory = "1Gi"
   }
 
-  # Health checks for Redis: liveness and readiness probes ensure Redis is up and responsive via 'PING' command.
+  # Health checks for Redis: Liveness and readiness probes ensure
+  # that Redis is up and responsive via the 'PING' command.
   liveness_probe = {
     initial_delay_seconds = 60
     period_seconds        = 30
