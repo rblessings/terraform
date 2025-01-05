@@ -41,17 +41,6 @@ resource "kubernetes_stateful_set" "this" {
       }
 
       spec {
-        # Init container to set proper ownership and permissions on the mounted volume
-        init_container {
-          name    = "set-volume-permissions"
-          image   = "busybox"
-          command = ["/bin/sh", "-c", "chown -R 1000:1000 ${var.mount_path}"]
-          volume_mount {
-            mount_path = var.mount_path # Consistent path for mounting volume
-            name       = "${var.name}-storage"
-          }
-        }
-
         container {
           name  = var.container_name
           image = var.image
