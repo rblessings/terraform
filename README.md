@@ -93,7 +93,7 @@ production deployment. For updates, refer to [issue #36](https://github.com/rble
    Execute the script to create the necessary directories:
 
    ```bash
-   ./setup_directories.sh
+   sudo ./setup_directories.sh
    ```
 
 4. Verify the Directories
