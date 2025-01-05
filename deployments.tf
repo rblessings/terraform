@@ -5,8 +5,8 @@ module "urlradar_deployment" {
   image          = "rblessings/urlradar:latest"
   container_name = "urlradar"
 
-  # TODO: URLradar is currently not stateless-compliant. Refer to the README.md for ongoing work in this area.
-  #       This constraint restricts demos to a single pod configuration.
+  # TODO: URLradar is not yet stateless-compliant. Refer to the URLradar project README.md for ongoing work in this area.
+  #   This constraint restricts testing to a single pod configuration.
   replicas       = 1
   container_port = 8080
 
@@ -68,19 +68,19 @@ module "mongodb_statefulset" {
   source         = "./modules/statefulset"
   name           = "mongodb"
   app_label      = "mongodb"
-  image          = "mongo:latest"
+  image          = "mongo:8.0.4"
   container_name = "mongodb"
   replicas       = 1
   container_port = 27017
 
   resource_requests = {
-    cpu    = "2"
-    memory = "2Gi"
+    cpu    = "2"        # Request 2 CPU cores (minimum required for MongoDB)
+    memory = "4Gi"      # Request 4Gi of memory (enough for moderate workloads)
   }
 
   resource_limits = {
-    cpu    = "2"
-    memory = "2Gi"
+    cpu    = "4"        # Limit to 4 CPU cores (to avoid overloading the node)
+    memory = "8Gi"      # Set a higher memory limit (e.g., 8Gi) for better scalability
   }
 
   # Health checks for MongoDB: Liveness and readiness probes ensure
@@ -138,19 +138,19 @@ module "kafka_statefulset" {
   container_port = 9092
 
   resource_requests = {
-    cpu    = "2"
-    memory = "2Gi"
+    cpu    = "2"         # Request 2 CPU cores (minimum for moderate workloads)
+    memory = "4Gi"       # Request 4Gi of memory (sufficient for many production workloads)
   }
 
   resource_limits = {
-    cpu    = "2"
-    memory = "2Gi"
+    cpu    = "4"         # Limit Kafka to 4 CPU cores (can scale higher with more nodes)
+    memory = "8Gi"       # Allow Kafka to use up to 8Gi of memory (enough for larger loads)
   }
 
   # Health checks for Kafka: Liveness and readiness probes ensure
   # that Kafka is running and responsive by listing topics.
   liveness_probe = {
-    initial_delay_seconds = 90
+    initial_delay_seconds = 120
     period_seconds        = 30
     timeout_seconds       = 5
     exec_command = [
@@ -159,7 +159,7 @@ module "kafka_statefulset" {
   }
 
   readiness_probe = {
-    initial_delay_seconds = 90
+    initial_delay_seconds = 120
     period_seconds        = 30
     timeout_seconds       = 5
     exec_command = [
@@ -216,10 +216,10 @@ module "kafka_statefulset" {
       name  = "KAFKA_TRANSACTION_STATE_LOG_MIN_ISR"
       value = "1"
     },
-    # {
-    #   name  = "KAFKA_LOG_DIRS"
-    #   value = "/var/lib/kafka/data"
-    # },
+    {
+      name  = "KAFKA_LOG_DIRS"
+      value = "/var/lib/kafka/data"
+    },
     {
       name  = "KAFKA_CLUSTER_ID"
       value = "urlradar-27-12-2024"
@@ -240,7 +240,7 @@ module "redis_statefulset" {
   source         = "./modules/statefulset"
   name           = "redis"
   app_label      = "redis"
-  image          = "redis:latest"
+  image          = "redis:7.4.1"
   container_name = "redis"
   replicas       = 1
   container_port = 6379
