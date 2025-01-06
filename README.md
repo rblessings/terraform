@@ -86,8 +86,6 @@ ls -lh /mnt/data/
 
 ### Deploying the Application to a Kubernetes Cluster
 
-### Deploying the Application to a Kubernetes Cluster
-
 ```bash
 # Plan the deployment
 terraform plan -var-file="environments/dev.tfvars"
