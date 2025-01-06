@@ -10,7 +10,7 @@ module "urlradar_deployment" {
   replicas       = 1
   container_port = 8080
 
-  cpu_request = "0.5"
+  cpu_request = "1"
   cpu_limit   = "2"
 
   memory_request = "1Gi"
@@ -74,13 +74,13 @@ module "mongodb_statefulset" {
   container_port = 27017
 
   resource_requests = {
-    cpu    = "2"        # Request 2 CPU cores (minimum required for MongoDB)
-    memory = "4Gi"      # Request 4Gi of memory (enough for moderate workloads)
+    cpu    = "1"
+    memory = "2Gi"
   }
 
   resource_limits = {
-    cpu    = "4"        # Limit to 4 CPU cores (to avoid overloading the node)
-    memory = "8Gi"      # Set a higher memory limit (e.g., 8Gi) for better scalability
+    cpu    = "2"
+    memory = "4Gi"
   }
 
   # Health checks for MongoDB: Liveness and readiness probes ensure
@@ -88,7 +88,7 @@ module "mongodb_statefulset" {
   liveness_probe = {
     initial_delay_seconds = 120
     period_seconds        = 30
-    timeout_seconds       = 3
+    timeout_seconds       = 5
     exec_command = [
       "mongosh", "--eval", "db.adminCommand('ping').ok"
     ]
@@ -97,7 +97,7 @@ module "mongodb_statefulset" {
   readiness_probe = {
     initial_delay_seconds = 120
     period_seconds        = 30
-    timeout_seconds       = 3
+    timeout_seconds       = 5
     exec_command = [
       "mongosh", "--eval", "db.adminCommand('ping').ok"
     ]
@@ -125,7 +125,7 @@ module "mongodb_statefulset" {
   mount_path  = "/data/db"
   pv_path     = "/mnt/data/mongodb-logs"
   pv_storage  = "20Gi"
-  pvc_storage = "10Gi"
+  pvc_storage = "20Gi"
 }
 
 module "kafka_statefulset" {
@@ -138,13 +138,13 @@ module "kafka_statefulset" {
   container_port = 9092
 
   resource_requests = {
-    cpu    = "2"         # Request 2 CPU cores (minimum for moderate workloads)
-    memory = "4Gi"       # Request 4Gi of memory (sufficient for many production workloads)
+    cpu    = "1"
+    memory = "2Gi"
   }
 
   resource_limits = {
-    cpu    = "4"         # Limit Kafka to 4 CPU cores (can scale higher with more nodes)
-    memory = "8Gi"       # Allow Kafka to use up to 8Gi of memory (enough for larger loads)
+    cpu    = "2"
+    memory = "4Gi"
   }
 
   # Health checks for Kafka: Liveness and readiness probes ensure
@@ -233,7 +233,7 @@ module "kafka_statefulset" {
   mount_path  = "/var/lib/kafka/data"
   pv_path     = "/mnt/data/kafka-logs"
   pv_storage  = "20Gi"
-  pvc_storage = "10Gi"
+  pvc_storage = "20Gi"
 }
 
 module "redis_statefulset" {
@@ -251,8 +251,8 @@ module "redis_statefulset" {
   }
 
   resource_limits = {
-    cpu    = "1"
-    memory = "1Gi"
+    cpu    = "2"
+    memory = "2Gi"
   }
 
   # Health checks for Redis: Liveness and readiness probes ensure
@@ -284,5 +284,5 @@ module "redis_statefulset" {
   mount_path  = "/data"
   pv_path     = "/mnt/data/redis-logs"
   pv_storage  = "5Gi"
-  pvc_storage = "2Gi"
+  pvc_storage = "5Gi"
 }
