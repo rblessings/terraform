@@ -29,7 +29,7 @@ resource "helm_release" "prometheus" {
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
   chart      = "prometheus"
   repository = "https://prometheus-community.github.io/helm-charts"
-  version    = "19.0.0"
+  version    = "26.1.0"
 
   # Ensure the namespace is created before the release
   depends_on = [
@@ -43,9 +43,16 @@ resource "helm_release" "prometheus" {
     <<EOF
 alertmanager:
   enabled: true
+
 server:
+  service:
+    type: NodePort
+    port: 9090
+    nodePort: 32002
+
   persistentVolume:
     enabled: false
+
   extraScrapeConfigs:
     - job_name: 'kubernetes-cadvisor'
       kubernetes_sd_configs:
@@ -54,6 +61,7 @@ server:
       relabel_configs:
         - source_labels: [__meta_kubernetes_node_name]
           target_label: node
+
     - job_name: 'kubernetes-pods'
       kubernetes_sd_configs:
         - role: pod
@@ -71,7 +79,7 @@ resource "helm_release" "grafana" {
   namespace  = kubernetes_namespace.monitoring.metadata[0].name
   chart      = "grafana"
   repository = "https://grafana.github.io/helm-charts"
-  version    = "6.58.2"
+  version    = "8.8.2"
 
   depends_on = [
     helm_release.prometheus

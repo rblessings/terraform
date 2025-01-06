@@ -62,85 +62,66 @@ Before using this repository, ensure that the following software is installed:
 
 ### Kubernetes Persistent Volume Setup
 
-#### Important Note on HostPath Volumes
-
-In the current development environment, `HostPath` volumes are used for persistent storage. Ensure the specified paths
-exist on **all worker nodes** before deployment. Manually create the directories on each node.
-
-This setup is limited in scalability and high availability. A more scalable solution will be implemented before
-production deployment. For updates, refer to [issue #36](https://github.com/rblessings/terraform/issues/36).
+**Note**: `HostPath` volumes are used for persistent storage in the current development environment. Ensure the
+specified paths exist on **all worker nodes** before deployment. This setup is not scalable or highly available. Refer
+to [issue #36](https://github.com/rblessings/terraform/issues/36) for future updates.
 
 #### Setup Instructions
 
-1. **Copy the `setup_directories.sh` Script**
+```bash
+# 1. Transfer the script to each worker node, or manually copy and paste its contents.
+scp setup_directories.sh <username>@<node_ip>:/path/to/destination
 
-   Transfer the script to each worker node using `scp`, or manually copy its contents:
+# 2. Make the script executable
+chmod +x setup_directories.sh
 
-    ```bash
-      scp setup_directories.sh <username>@<node_ip>:/path/to/destination
-    ```
+# 3. Run the script to create directories
+sudo ./setup_directories.sh
 
-2. Make the Script Executable
-
-   After transferring the script to the worker node(s), grant it executable permissions:
-
-   ```bash
-   chmod +x setup_directories.sh
-   ```
-
-3. Run the Script
-
-   Execute the script to create the necessary directories:
-
-   ```bash
-   sudo ./setup_directories.sh
-   ```
-
-4. Verify the Directories
-
-   Finally, verify that the directories were created successfully with the correct permissions by listing their
-   contents:
-
-   ```bash
-      ls -lh /mnt/data/
-   ```
+# 4. Verify the directories
+ls -lh /mnt/data/
+```
 
 ---
 
 ### Deploying the Application to a Kubernetes Cluster
 
+### Deploying the Application to a Kubernetes Cluster
+
 ```bash
+# Plan the deployment
 terraform plan -var-file="environments/dev.tfvars"
+
+# Apply the deployment
 terraform apply -var-file="environments/dev.tfvars"
+
+# Destroy the deployment (if needed)
 terraform destroy -var-file="environments/dev.tfvars"
 ```
 
 ### Import Kubernetes Cluster Dashboard
 
-To start monitoring your Kubernetes cluster, you can import a pre-built Kubernetes cluster dashboard in Grafana. This
-will allow you to visualize and monitor the health and performance of your Kubernetes environment with key metrics such
-as pod status, node resource usage, and cluster health.
+To monitor your Kubernetes cluster, you can import a pre-built dashboard into Grafana. This allows you to visualize key
+metrics such as pod status, node resource usage, and overall cluster health.
 
-#### **Steps to Import the Kubernetes Cluster Dashboard**:
+#### Steps to Import the Kubernetes Cluster Dashboard:
 
-1. **Access Grafana UI**:
+1. **Access Grafana UI**:  
    Open your web browser and navigate to Grafana's URL (e.g., `http://<node-ip>:32000`).
 
-2. **Login to Grafana**:
-   Use the credentials you set up in the Terraform configuration (default: `admin`/`admin`).
+2. **Login to Grafana**:  
+   Use the credentials set up in the Terraform configuration (default: `admin`/`admin`).
 
 3. **Import Dashboard**:
-
-- In the left sidebar, click on the **+** icon.
-- Select **Import**.
-- In the **Import via grafana.com** field, enter **Dashboard ID `315`** (which is a popular Kubernetes cluster
-  monitoring dashboard).
-- Click **Load**.
+    - In the left sidebar, click the **+** icon.
+    - Select **Import**.
+    - In the **Import via grafana.com** field, enter **Dashboard ID `315`** (a popular Kubernetes cluster monitoring
+      dashboard).
+    - Click **Load**.
 
 4. **Configure Data Source**:
-
-- Once the dashboard is loaded, select **Prometheus** as the data source.
-- Click **Import** to finish the setup.
+    - After the dashboard loads, select **Prometheus** as the data source.
+    - Click **Import** to finish the setup.
 
 The dashboard is now available, and you can start monitoring your Kubernetes cluster metrics.
 
