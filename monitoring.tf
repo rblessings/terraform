@@ -43,11 +43,6 @@ alertmanager:
   enabled: true
 
 server:
-  service:
-    type: ClusterIP
-    port: 9090
-    nodePort: 32002
-
   persistentVolume:
     enabled: false
 

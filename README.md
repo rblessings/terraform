@@ -132,7 +132,7 @@ The dashboard is now available, and you can start monitoring your metrics.
 1. **Node CPU Utilization**
     - **Query**:
       ```prometheus
-      sum by (node) (rate(container_cpu_usage_seconds_total{container="", image!="", job="kubelet"}[5m])) / sum by (node) (kube_node_status_capacity_cpu_cores{node=~".+"})
+      100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) by (instance) * 100)
       ```
     - **Description**:  
       Shows the CPU utilization as a percentage across nodes, helping identify resource bottlenecks.
@@ -150,7 +150,9 @@ The dashboard is now available, and you can start monitoring your metrics.
 1. **HTTP Response Time**
     - **Query**:
       ```prometheus
-      avg by (status) (rate(http_server_requests_seconds_sum{application="UrlRadar", status=~"2.*|5.*"}[1m])) / avg by (status) (rate(http_server_requests_seconds_count{application="UrlRadar", status=~"2.*|5.*"}[1m]))
+      avg(http_server_requests_seconds_sum{status=~"2.*|4.*|5.*"}) 
+      / 
+      avg(http_server_requests_seconds_count{status=~"2.*|4.*|5.*"})
       ```
     - **Description**:  
       Calculates the average response time for HTTP requests, showing both successful and failed requests.
@@ -158,7 +160,9 @@ The dashboard is now available, and you can start monitoring your metrics.
 2. **JVM Heap Memory Usage**
     - **Query**:
       ```prometheus
-      (jvm_memory_bytes_used{application="UrlRadar", area="heap"} / jvm_memory_bytes_max{application="UrlRadar", area="heap"}) * 100
+      100 * (avg(jvm_memory_used_bytes{area="heap"}) by (instance)) 
+      / 
+      avg(jvm_memory_max_bytes{area="heap"}) by (instance)
       ```
     - **Description**:  
       Monitors heap memory usage as a percentage of total capacity, helping detect memory pressure.
