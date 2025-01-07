@@ -10,17 +10,17 @@ module "kubernetes_persistent_volume_claim" {
   labels = {}
 
   # Persistent Volume (PV) configuration
-  pv_name          = "prometheus-alertmanager-pv"
-  pv_storage       = "10Gi"
-  pv_access_modes  = ["ReadWriteOnce"]
-  pv_path          = "/mnt/data/prometheus-alertmanager"
+  pv_name    = "prometheus-alertmanager-pv"
+  pv_storage = "10Gi"
+  pv_access_modes = ["ReadWriteOnce"]
+  pv_path    = "/mnt/data/prometheus-alertmanager"
   pv_storage_class = "slow"
 
   # Persistent Volume Claim (PVC) configuration
   pvc_name          = "storage-prometheus-alertmanager-0"
   pvc_namespace     = kubernetes_namespace.monitoring.metadata[0].name
   pvc_storage       = "10Gi"
-  pvc_access_modes  = ["ReadWriteOnce"]
+  pvc_access_modes = ["ReadWriteOnce"]
   pvc_storage_class = "slow"
 }
 
@@ -31,13 +31,11 @@ resource "helm_release" "prometheus" {
   repository = "https://prometheus-community.github.io/helm-charts"
   version    = "26.1.0"
 
-  # Ensure the namespace is created before the release
   depends_on = [
     kubernetes_namespace.monitoring
   ]
 
-  # Increase Helm timeout to avoid context deadline exceeded errors
-  timeout = 600 # 10 minutes
+  timeout = 600 # Increase Helm timeout to 10 minutes to avoid context deadline exceeded errors.
 
   values = [
     <<EOF
@@ -46,28 +44,18 @@ alertmanager:
 
 server:
   service:
-    type: NodePort
+    type: ClusterIP
     port: 9090
     nodePort: 32002
 
   persistentVolume:
     enabled: false
 
-  extraScrapeConfigs:
-    - job_name: 'kubernetes-cadvisor'
-      kubernetes_sd_configs:
-        - role: node
-      metrics_path: /metrics/cadvisor
-      relabel_configs:
-        - source_labels: [__meta_kubernetes_node_name]
-          target_label: node
-
-    - job_name: 'kubernetes-pods'
-      kubernetes_sd_configs:
-        - role: pod
-      relabel_configs:
-        - source_labels: [__meta_kubernetes_pod_name]
-          target_label: pod_name
+extraScrapeConfigs: |
+  - job_name: 'urlradar-metrics'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['urlradar-svc.default.svc.cluster.local:8080']
 EOF
   ]
 }

@@ -2,19 +2,21 @@
 
 ---
 
-The project being deployed to the Kubernetes cluster is located in my
-repository: [https://github.com/rblessings/urlradar](https://github.com/rblessings/urlradar).
-
 **For a detailed understanding of the project's direction and planned features, please refer to the open issues.**
-
 
 ---
 
-This repository showcases a Terraform project focused on advanced features, best practices, and a GitHub Actions-based
-CI/CD pipeline. The objective is to implement a modern IaC solution that aligns with Terraform's latest standards and
-integrates with CI/CD workflows. It also includes comprehensive Kubernetes monitoring with Prometheus and Grafana for
-real-time observability, metrics collection, and visualization, ensuring cloud-native infrastructure scalability and
-reliability.
+This repository showcases a **Terraform** project focused on advanced features, best practices, and a CI/CD pipeline
+based
+on GitHub Actions. The goal is to implement a modern Infrastructure as Code (IaC) solution that integrates seamlessly
+with CI/CD workflows and GitOps practices, while ensuring scalability, reliability, and observability for a cloud-native
+application.
+
+In this project, the application is [UrlRadar](https://github.com/rblessings/urlradar), a URL redirection service. The
+infrastructure is built on **Kubernetes** and
+includes **Prometheus** and **Grafana** for metrics collection and visualization. These tools provide insights into both
+the
+performance of the urlradar application and the underlying Kubernetes cluster where the project is deployed.
 
 [![Terraform Validation](https://github.com/rblessings/terraform/actions/workflows/terraform.yml/badge.svg)](https://github.com/rblessings/terraform/actions/workflows/terraform.yml)
 [![Dependabot Updates](https://github.com/rblessings/terraform/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/rblessings/terraform/actions/workflows/dependabot/dependabot-updates)
@@ -56,6 +58,7 @@ Before using this repository, ensure that the following software is installed:
 - [Terraform](https://www.terraform.io/downloads.html) (1.10.3 or any newer version)
 - [Git](https://git-scm.com/)
 - [GitHub Account](https://github.com)
+- [HCP Terraform Account](https://app.terraform.io)
 - Access to a Kubernetes cluster (on-premises, AWS, Azure, GCP, etc.) with the appropriate credentials.
 
 ## Usage
@@ -97,31 +100,75 @@ terraform apply -var-file="environments/dev.tfvars"
 terraform destroy -var-file="environments/dev.tfvars"
 ```
 
-### Import Kubernetes Cluster Dashboard
+### Import Dashboard for Monitoring
 
-To monitor your Kubernetes cluster, you can import a pre-built dashboard into Grafana. This allows you to visualize key
-metrics such as pod status, node resource usage, and overall cluster health.
+To monitor the UrlRadar application and your Kubernetes cluster, you can import pre-built dashboards into Grafana. This
+enables you to visualize key metrics related to application health, performance, and resource usage.
 
-#### Steps to Import the Kubernetes Cluster Dashboard:
+#### Steps to Import a Dashboard:
 
 1. **Access Grafana UI**:  
    Open your web browser and navigate to Grafana's URL (e.g., `http://<node-ip>:32000`).
 
 2. **Login to Grafana**:  
-   Use the credentials set up in the Terraform configuration (default: `admin`/`admin`).
+   Use the credentials set up in your environment (default: `admin`/`admin`).
 
 3. **Import Dashboard**:
     - In the left sidebar, click the **+** icon.
     - Select **Import**.
-    - In the **Import via grafana.com** field, enter **Dashboard ID `315`** (a popular Kubernetes cluster monitoring
-      dashboard).
+    - In the **Import via grafana.com** field, enter the respective Dashboard ID:
+        - For Kubernetes cluster monitoring, use **Dashboard ID `315`**.
+        - For Spring Boot 3 application monitoring, use **Dashboard ID `19004`**.
     - Click **Load**.
 
 4. **Configure Data Source**:
-    - After the dashboard loads, select **Prometheus** as the data source.
+    - After the dashboard loads, select the appropriate **Prometheus** data source.
     - Click **Import** to finish the setup.
 
-The dashboard is now available, and you can start monitoring your Kubernetes cluster metrics.
+The dashboard is now available, and you can start monitoring your metrics.
+
+### Kubernetes Monitoring Queries
+
+1. **Node CPU Utilization**
+    - **Query**:
+      ```prometheus
+      sum by (node) (rate(container_cpu_usage_seconds_total{container="", image!="", job="kubelet"}[5m])) / sum by (node) (kube_node_status_capacity_cpu_cores{node=~".+"})
+      ```
+    - **Description**:  
+      Shows the CPU utilization as a percentage across nodes, helping identify resource bottlenecks.
+
+2. **Pod Restart Frequency**
+    - **Query**:
+      ```prometheus
+      increase(kube_pod_container_status_restarts_total[5m])
+      ```
+    - **Description**:  
+      Tracks the number of container restarts, indicating potential reliability issues.
+
+### Spring Boot Monitoring Queries
+
+1. **HTTP Response Time**
+    - **Query**:
+      ```prometheus
+      avg by (status) (rate(http_server_requests_seconds_sum{application="UrlRadar", status=~"2.*|5.*"}[1m])) / avg by (status) (rate(http_server_requests_seconds_count{application="UrlRadar", status=~"2.*|5.*"}[1m]))
+      ```
+    - **Description**:  
+      Calculates the average response time for HTTP requests, showing both successful and failed requests.
+
+2. **JVM Heap Memory Usage**
+    - **Query**:
+      ```prometheus
+      (jvm_memory_bytes_used{application="UrlRadar", area="heap"} / jvm_memory_bytes_max{application="UrlRadar", area="heap"}) * 100
+      ```
+    - **Description**:  
+      Monitors heap memory usage as a percentage of total capacity, helping detect memory pressure.
+
+### Summary
+
+- **Kubernetes**: Focus on node CPU utilization and pod restarts for cluster stability.
+- **Spring Boot**: Monitor HTTP response times and JVM memory usage for application health.
+
+These are just a few of the many wonderful queries you can perform to gain deeper insights into your systems!
 
 ---
 
