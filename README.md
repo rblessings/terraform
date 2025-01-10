@@ -159,9 +159,9 @@ The dashboard is now available, and you can start monitoring your metrics.
 1. **HTTP Response Time**
     - **Query**:
       ```prometheus
-      avg(http_server_requests_seconds_sum{status=~"2.*|4.*|5.*"}) 
-      / 
-      avg(http_server_requests_seconds_count{status=~"2.*|4.*|5.*"})
+      avg(rate(http_server_requests_seconds_sum{status=~"2.*|4.*|5.*"}[5m]))
+      /
+      avg(rate(http_server_requests_seconds_count{status=~"2.*|4.*|5.*"}[5m]))
       ```
     - **Description**:  
       Calculates the average response time for HTTP requests, showing both successful and failed requests.
