@@ -20,13 +20,12 @@ the performance of the urlradar application and the underlying Kubernetes cluste
 ---
 
 **PLEASE NOTE:**  
-For demonstration purposes, I focus on showcasing Terraform best practices and features related to Infrastructure as
-Code (IaC), observability, CI/CD workflows, and GitOps. To aid in these demonstrations, I use Kubernetes manifest files
-written within Terraform, which are located in the `modules` directory.
+For demonstration purposes, I focus on Terraform best practices for IaC, observability, CI/CD workflows, and GitOps. To
+aid in this, I use Kubernetes manifest files within Terraform, located in the `modules` directory.
 
-In a production setting, however, Kubernetes manifest files are typically written by platform teams or dedicated
-Kubernetes engineers. These teams usually create manifests in plain Kubernetes YAML or, preferably, use Helm for better
-manageability and flexibility. This is the approach I take in a production environment as well.
+In production, Kubernetes manifests are typically written by platform teams or Kubernetes engineers, often in plain YAML
+or using Helm for better manageability. This is the approach I follow in production, where I deploy to managed
+Kubernetes clusters, such as AWS EKS.
 
 [![Terraform Validation](https://github.com/rblessings/terraform/actions/workflows/terraform.yml/badge.svg)](https://github.com/rblessings/terraform/actions/workflows/terraform.yml)
 [![Dependabot Updates](https://github.com/rblessings/terraform/actions/workflows/dependabot/dependabot-updates/badge.svg)](https://github.com/rblessings/terraform/actions/workflows/dependabot/dependabot-updates)
