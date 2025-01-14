@@ -45,6 +45,11 @@ server:
   persistentVolume:
     enabled: false
 
+  service:
+    type: NodePort
+    port: 9090
+    nodePort: 32002
+
 extraScrapeConfigs: |
   - job_name: 'urlradar-metrics'
     metrics_path: '/actuator/prometheus'
