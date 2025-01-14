@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # -----------------------------------------------------------------------------
-# Script Name: setup_directories.sh
+# Script Name: setup-dirs.sh
 # Description:
 #   Automates the creation and permission setup of directories for logging and
 #   persistent storage used by Kubernetes applications like MongoDB, Prometheus,

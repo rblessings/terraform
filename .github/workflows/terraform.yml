@@ -1,4 +1,4 @@
-name: Terraform Validation
+name: Terraform Validation and CI/CD Integration
 
 on:
   push:
@@ -12,7 +12,7 @@ jobs:
 
   # Run Super Linter to validate code quality and enforce style guidelines
   superlinter:
-    name: Run Super Linter for Code Validation
+    name: Run Super Linter for Code Quality and Style Enforcement
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
@@ -32,9 +32,9 @@ jobs:
           VALIDATE_MD: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  # Validate and lint Terraform configuration, ensuring proper syntax, code quality, and security best practices.
+  # Validate and lint Terraform configuration to ensure proper syntax, code quality, and security best practices
   terraform:
-    name: Validate and Lint Terraform Configuration
+    name: Validate and Lint Terraform Configuration for Quality and Security
     runs-on: ubuntu-latest
     steps:
       - name: Check out the repository
@@ -57,7 +57,7 @@ jobs:
       - name: Validate Terraform Configuration
         run: terraform validate
 
-      - name: Execute TFLint
+      - name: Execute TFLint for Terraform Code Linting
         uses: terraform-linters/setup-tflint@v3
         with:
           tflint_version: v0.53.0
@@ -65,35 +65,20 @@ jobs:
       - name: Perform Terraform Linting
         run: tflint --format=compact
 
-      - name: Execute TFSEC
+      - name: Execute TFSEC for Security Scanning of Terraform Code
         uses: aquasecurity/tfsec-action@v1.0.3
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Ensure GITHUB_TOKEN is passed here for API requests
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # If your Kubernetes cluster is publicly accessible, you may uncomment the following steps
-      # to integrate Terraform's `plan` and `apply` stages into your CI/CD pipeline.
-      # The Terraform Plan step will run on pull requests to review the changes before merging.
-      # The Terraform Apply step will automatically apply the changes when pushing to the `main` branch.
-      # Ensure that your cluster's access permissions and security policies allow for remote management.
+# Uncomment the following steps if integrating Terraform's `plan` and `apply` stages into your CI/CD pipeline.
+# The Terraform Plan step will run on pull requests to review proposed changes before merging.
+# The Terraform Apply step will automatically apply changes when pushing to the `main` branch.
+# Ensure cluster access permissions and security policies allow safe remote management.
 
-#        - name: Terraform Plan
+#        - name: Terraform Plan (Run on Pull Request)
 #          run: terraform plan -no-color
 #          if: github.event_name == 'pull_request'
 #
-#        - name: Terraform Apply
+#        - name: Terraform Apply (Run on Push to Main)
 #          if: github.ref == 'refs/heads/main' && github.event_name == 'push'
 #          run: terraform apply -auto-approve
-
-  # TODO: Implement Slack notifications for failed builds to alert the team in the event of pipeline failures.
-
-  # Notify Slack on failure
-#  notify-slack:
-#    if: failure()  # This job will run only if any of the above jobs fail
-#    runs-on: ubuntu-latest
-#    steps:
-#      - name: Send Slack Notification
-#        run: |
-#          curl -X POST -H 'Content-type: application/json' --data "{
-#            \"text\": \"*Pipeline Failure* - Terraform Validation failed for the repository ${GITHUB_REPOSITORY}.
-#              \n\nDetails: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}\"
-#          }" ${{ secrets.SLACK_WEBHOOK_URL }}

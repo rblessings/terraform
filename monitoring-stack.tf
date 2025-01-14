@@ -4,23 +4,22 @@ resource "kubernetes_namespace" "monitoring" {
   }
 }
 
-# Creating a Persistent Volume (PV) and a Persistent Volume Claim (PVC) for Prometheus
 module "kubernetes_persistent_volume_claim" {
   source = "./modules/pvc"
   labels = {}
 
   # Persistent Volume (PV) configuration
-  pv_name    = "prometheus-alertmanager-pv"
-  pv_storage = "10Gi"
-  pv_access_modes = ["ReadWriteOnce"]
-  pv_path    = "/mnt/data/prometheus-alertmanager"
+  pv_name          = "prometheus-alertmanager-pv"
+  pv_storage       = "10Gi"
+  pv_access_modes  = ["ReadWriteOnce"]
+  pv_path          = "/mnt/data/prometheus-alertmanager"
   pv_storage_class = "slow"
 
   # Persistent Volume Claim (PVC) configuration
   pvc_name          = "storage-prometheus-alertmanager-0"
   pvc_namespace     = kubernetes_namespace.monitoring.metadata[0].name
   pvc_storage       = "10Gi"
-  pvc_access_modes = ["ReadWriteOnce"]
+  pvc_access_modes  = ["ReadWriteOnce"]
   pvc_storage_class = "slow"
 }
 
@@ -60,8 +59,6 @@ EOF
   ]
 }
 
-# TODO: Parameterize Grafana credentials (adminUser and adminPassword) and store them securely
-#  in HashiCorp Vault or Kubernetes Secrets.
 resource "helm_release" "grafana" {
   name       = "grafana"
   namespace  = kubernetes_namespace.monitoring.metadata[0].name

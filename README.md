@@ -74,13 +74,13 @@ to [issue #36](https://github.com/rblessings/terraform/issues/36) for future upd
 
 ```bash
 # 1. Transfer the script to each worker node, or manually copy and paste its contents.
-scp setup_directories.sh <username>@<node_ip>:/path/to/destination
+scp setup-dirs.sh <username>@<node_ip>:/path/to/destination
 
 # 2. Make the script executable
-chmod +x setup_directories.sh
+chmod +x setup-dirs.sh
 
 # 3. Run the script to create directories
-sudo ./setup_directories.sh
+sudo ./setup-dirs.sh
 
 # 4. Verify the directories
 ls -lh /mnt/data/
