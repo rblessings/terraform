@@ -1,3 +1,7 @@
+# TODO: Replace Kubernetes Service NodePort type with Ingress for all services to improve external access management.
+#       Benefits: Centralized routing, enhanced security, and better scalability.
+#       Current configurations use NodePort for external access.
+
 module "urlradar_svc" {
   source       = "./modules/service"
   name         = "urlradar-svc"
@@ -14,6 +18,25 @@ module "urlradar_svc" {
 
   depends_on = [
     module.urlradar_deployment
+  ]
+}
+
+module "auth-server-svc" {
+  source       = "./modules/service"
+  name         = "auth-server-svc"
+  app_label    = module.auth_server_deployment.deployment_app_label
+  service_type = "NodePort"
+
+  ports = [
+    {
+      name        = "http"
+      port        = 8080
+      target_port = 8080
+    }
+  ]
+
+  depends_on = [
+    module.auth_server_deployment
   ]
 }
 

@@ -5,8 +5,6 @@ module "urlradar_deployment" {
   image          = "rblessings/urlradar:latest"
   container_name = "urlradar"
 
-  # TODO: URLradar is not yet stateless-compliant. Refer to the URLradar project README.md for ongoing work in this area.
-  #   This constraint restricts testing to a single pod configuration.
   replicas       = 1
   container_port = 8080
 
@@ -40,7 +38,8 @@ module "urlradar_deployment" {
     {
       name = "SPRING_DATA_MONGODB_URI"
 
-      # TODO: Integrate HashiCorp Vault or Kubernetes Secrets for secure credential retrieval.
+      # TODO: Integrate HashiCorp Vault or Kubernetes Secrets to securely manage
+      #  and retrieve credentials, ensuring encryption at rest and access control.
       value = "mongodb://root:secret@mongodb-svc:27017/urlradar?authSource=admin"
     },
     {
@@ -54,16 +53,23 @@ module "urlradar_deployment" {
     {
       name  = "SPRING_KAFKA_BOOTSTRAP_SERVERS"
       value = "kafka-svc:9092"
+    },
+    {
+      name  = "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI"
+      value = "http://auth-server-svc.default.svc.cluster.local:8080"
     }
   ]
 
   depends_on = [
     module.mongodb_statefulset,
     module.redis_statefulset,
-    module.kafka_statefulset
+    module.kafka_statefulset,
+    module.auth_server_deployment
   ]
 }
 
+# TODO: Deploy MongoDB replica set and enable automated data
+#  backups for high availability and disaster recovery.
 module "mongodb_statefulset" {
   source         = "./modules/statefulset"
   name           = "mongodb"
@@ -109,8 +115,11 @@ module "mongodb_statefulset" {
       value = "root"
     },
     {
-      name  = "MONGO_INITDB_ROOT_PASSWORD"
-      value = "secret" # TODO: Integrate HashiCorp Vault or Kubernetes Secrets for secure credential retrieval.
+      name = "MONGO_INITDB_ROOT_PASSWORD"
+
+      # TODO: Integrate HashiCorp Vault or Kubernetes Secrets to securely manage
+      #  and retrieve credentials, ensuring encryption at rest and access control.
+      value = "secret"
     },
     {
       name  = "MONGO_INITDB_DATABASE"
@@ -128,6 +137,8 @@ module "mongodb_statefulset" {
   pvc_storage = "20Gi"
 }
 
+# TODO: Set up Apache Kafka cluster for scalable event streaming
+#  and ensure proper data retention policies are configured.
 module "kafka_statefulset" {
   source         = "./modules/statefulset"
   name           = "kafka"
@@ -236,6 +247,8 @@ module "kafka_statefulset" {
   pvc_storage = "20Gi"
 }
 
+# TODO: Deploy Redis cluster for high-performance caching
+#  and ensure persistence and failover configurations are optimized.
 module "redis_statefulset" {
   source         = "./modules/statefulset"
   name           = "redis"
