@@ -108,7 +108,7 @@ module "redis_auth_server_statefulset" {
   }
 
   mount_path  = "/data"
-  pv_path     = "/mnt/data/redis-logs"
+  pv_path     = "/mnt/data/redis-logs-auth-server"
   pv_storage  = "5Gi"
   pvc_storage = "5Gi"
 }

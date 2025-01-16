@@ -17,6 +17,7 @@ DIRECTORIES=(
   "/mnt/data/mongodb-logs"
   "/mnt/data/prometheus-alertmanager"
   "/mnt/data/redis-logs"
+  "/mnt/data/redis-logs-auth-server"
 )
 
 # Function to check for sudo privileges
