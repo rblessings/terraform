@@ -67,13 +67,13 @@ Before using this repository, ensure that the following software is installed:
 ### Kubernetes Persistent Volume Setup
 
 **Note**: `HostPath` volumes are used for persistent storage in the current development environment. Ensure the
-specified paths exist on **all worker nodes** before deployment. This setup is not scalable or highly available. Refer
+specified paths exist on **all nodes** before deployment. This setup is not scalable or highly available. Refer
 to [issue #36](https://github.com/rblessings/terraform/issues/36) for future updates.
 
 #### Setup Instructions
 
 ```bash
-# 1. Transfer the script to each worker node, or manually copy and paste its contents.
+# 1. Transfer the script to each node, or manually copy and paste its contents.
 scp setup-dirs.sh <username>@<node_ip>:/path/to/destination
 
 # 2. Make the script executable
@@ -151,12 +151,13 @@ The dashboard is now available, and you can start monitoring your metrics.
 1. **HTTP Response Time**
     - **Query**:
       ```prometheus
-      avg(rate(http_server_requests_seconds_sum{status=~"2.*|4.*|5.*"}[5m]))
+      avg(rate(http_server_requests_seconds_sum{status=~"2.*|4.*|5.*"}[5m])) by (instance, status)
       /
-      avg(rate(http_server_requests_seconds_count{status=~"2.*|4.*|5.*"}[5m]))
+      avg(rate(http_server_requests_seconds_count{status=~"2.*|4.*|5.*"}[5m])) by (instance, status)
       ```
+
     - **Description**:  
-      Calculates the average response time for HTTP requests, showing both successful and failed requests.
+      Calculates the average response time for HTTP requests (successful and failed), grouped by instance and status
 
 2. **JVM Heap Memory Usage**
     - **Query**:
@@ -166,7 +167,7 @@ The dashboard is now available, and you can start monitoring your metrics.
       avg(jvm_memory_max_bytes{area="heap"}) by (instance)
       ```
     - **Description**:  
-      Monitors heap memory usage as a percentage of total capacity, helping detect memory pressure.
+      Monitors heap memory usage as a percentage of total capacity per instance, helping detect memory pressure.
 
 ### Summary
 
