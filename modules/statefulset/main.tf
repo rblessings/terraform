@@ -1,20 +1,14 @@
-module "kubernetes_persistent_volume_claim" {
-  source = "../../modules/pvc"
-  labels = var.labels
+module "kubernetes_persistent_volume" {
+  source = "../../modules/pv"
 
-  # Persistent Volume (PV) configuration
+  labels    = var.labels
+  app_label = var.app_label
+
   pv_name          = format("%s-pv", var.name)
   pv_storage       = var.pv_storage
   pv_access_modes  = var.pv_access_modes
   pv_path          = var.pv_path
   pv_storage_class = var.pv_storage_class
-
-  # Persistent Volume Claim (PVC) configuration
-  pvc_namespace     = var.pvc_namespace
-  pvc_storage       = var.pvc_storage
-  pvc_access_modes  = var.pvc_access_modes
-  pvc_storage_class = var.pvc_storage_class
-  pvc_name          = format("%s-pvc", var.name)
 }
 
 resource "kubernetes_stateful_set" "this" {
@@ -27,7 +21,7 @@ resource "kubernetes_stateful_set" "this" {
 
     selector {
       match_labels = merge(var.labels, {
-        app = var.app_label
+        app = var.app_label # Ensure this matches the PV labels
       })
     }
 
@@ -120,16 +114,27 @@ resource "kubernetes_stateful_set" "this" {
           # Mount the persistent volume
           volume_mount {
             mount_path = var.mount_path
-            name       = "${var.name}-storage"
+            name       = format("%s-storage", var.name)
           }
         }
+      }
+    }
 
-        # Define volume and link to PVC
-        volume {
-          name = "${var.name}-storage"
+    volume_claim_template {
+      metadata {
+        name = format("%s-storage", var.name)
+        labels = merge(var.labels, {
+          app = var.app_label # Ensure this matches the PV labels
+        })
+      }
 
-          persistent_volume_claim {
-            claim_name = module.kubernetes_persistent_volume_claim.pvc_name
+      spec {
+        access_modes       = var.pv_access_modes
+        storage_class_name = var.pv_storage_class
+
+        resources {
+          requests = {
+            storage = var.pv_storage
           }
         }
       }

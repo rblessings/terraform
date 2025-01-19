@@ -101,28 +101,10 @@ variable "pv_storage_class" {
   default     = "slow"
 }
 
-variable "pvc_storage" {
-  type        = string
-  description = "The storage size for the PersistentVolumeClaim."
-  default     = "20Gi"
-}
-
-variable "pvc_access_modes" {
-  type        = list(string)
-  description = "The access modes for the PersistentVolumeClaim."
-  default     = ["ReadWriteOnce"]
-}
-
-variable "pvc_storage_class" {
-  type        = string
-  description = "The storage class for the PersistentVolumeClaim."
-  default     = "slow"
-}
-
 variable "pv_storage" {
   type        = string
   description = "The storage size for the PersistentVolume."
-  default     = "20Gi"
+  default     = "10Gi"
 }
 
 variable "pv_access_modes" {
@@ -135,10 +117,4 @@ variable "pv_access_modes" {
 variable "pv_path" {
   type        = string
   description = "The host path for the PersistentVolume."
-}
-
-variable "pvc_namespace" {
-  type        = string
-  description = "The name of the PVC namespace."
-  default     = "default"
 }

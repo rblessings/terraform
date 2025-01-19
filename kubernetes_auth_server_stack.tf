@@ -1,5 +1,6 @@
 module "auth_server_deployment" {
-  source         = "./modules/deployment"
+  source = "./modules/deployment"
+
   name           = "auth-server"
   app_label      = "auth-server"
   image          = "rblessings/oauth2-oidc-jwt-auth-server:latest"
@@ -17,9 +18,6 @@ module "auth_server_deployment" {
 
   memory_request = "1Gi"
   memory_limit   = "2Gi"
-
-  # health checks for liveness and readiness probes to monitor application
-  # health and verify availability of critical dependencies (e.g., MongoDB, Kafka, Redis).
 
   liveness_probe = {
     initial_delay_seconds = 90
@@ -61,10 +59,17 @@ module "auth_server_deployment" {
 
 # TODO: Deploy Redis cluster for high-performance caching
 #  and ensure persistence and failover configurations are optimized.
+
 module "redis_auth_server_statefulset" {
-  source         = "./modules/statefulset"
-  name           = "redis-auth-server"
-  app_label      = "redis-auth-server"
+  source = "./modules/statefulset"
+
+  name      = "redis-auth-server"
+  app_label = "redis-auth-server"
+
+  labels = {
+    app = "redis-auth-server"
+  }
+
   image          = "redis:7.4.1"
   container_name = "redis-auth-server"
   replicas       = 1
@@ -79,9 +84,6 @@ module "redis_auth_server_statefulset" {
     cpu    = "2"
     memory = "2Gi"
   }
-
-  # Health checks for Redis using liveness and readiness probes
-  # to ensure Redis is up and responsive via the 'PING' command.
 
   liveness_probe = {
     initial_delay_seconds = 60
@@ -103,18 +105,14 @@ module "redis_auth_server_statefulset" {
 
   environment = []
 
-  labels = {
-    env = "dev"
-  }
-
-  mount_path  = "/data"
-  pv_path     = "/mnt/data/redis-logs-auth-server"
-  pv_storage  = "5Gi"
-  pvc_storage = "5Gi"
+  mount_path = "/data"
+  pv_path    = "/mnt/data/redis-logs-auth-server"
+  pv_storage = "5Gi"
 }
 
 module "redis_auth_server_svc" {
-  source    = "./modules/service"
+  source = "./modules/service"
+
   name      = "redis-auth-server-svc"
   app_label = module.redis_auth_server_statefulset.statefulset_name
 

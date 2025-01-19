@@ -1,5 +1,6 @@
 module "urlradar_deployment" {
-  source         = "./modules/deployment"
+  source = "./modules/deployment"
+
   name           = "urlradar"
   app_label      = "urlradar"
   image          = "rblessings/urlradar:latest"
@@ -14,8 +15,6 @@ module "urlradar_deployment" {
   memory_request = "1Gi"
   memory_limit   = "2Gi"
 
-  # Health checks for liveness and readiness probes monitor the application's health
-  # and ensure that dependencies (e.g., MongoDB, Kafka, Redis) are available.
   liveness_probe = {
     initial_delay_seconds = 90
     period_seconds        = 30
@@ -40,6 +39,7 @@ module "urlradar_deployment" {
 
       # TODO: Integrate HashiCorp Vault or Kubernetes Secrets to securely manage
       #  and retrieve credentials, ensuring encryption at rest and access control.
+
       value = "mongodb://root:secret@mongodb-svc:27017/urlradar?authSource=admin"
     },
     {
@@ -70,10 +70,17 @@ module "urlradar_deployment" {
 
 # TODO: Deploy MongoDB replica set and enable automated data
 #  backups for high availability and disaster recovery.
+
 module "mongodb_statefulset" {
-  source         = "./modules/statefulset"
-  name           = "mongodb"
-  app_label      = "mongodb"
+  source = "./modules/statefulset"
+
+  name      = "mongodb"
+  app_label = "mongodb"
+
+  labels = {
+    app = "mongodb"
+  }
+
   image          = "mongo:8.0.4"
   container_name = "mongodb"
   replicas       = 1
@@ -89,8 +96,6 @@ module "mongodb_statefulset" {
     memory = "4Gi"
   }
 
-  # Health checks for MongoDB: Liveness and readiness probes ensure
-  # MongoDB is operational and responsive.
   liveness_probe = {
     initial_delay_seconds = 120
     period_seconds        = 30
@@ -119,6 +124,7 @@ module "mongodb_statefulset" {
 
       # TODO: Integrate HashiCorp Vault or Kubernetes Secrets to securely manage
       #  and retrieve credentials, ensuring encryption at rest and access control.
+
       value = "secret"
     },
     {
@@ -127,22 +133,24 @@ module "mongodb_statefulset" {
     }
   ]
 
-  labels = {
-    env = "dev"
-  }
-
-  mount_path  = "/data/db"
-  pv_path     = "/mnt/data/mongodb-logs"
-  pv_storage  = "20Gi"
-  pvc_storage = "20Gi"
+  mount_path = "/data/db"
+  pv_path    = "/mnt/data/mongodb-logs"
+  pv_storage = "10Gi"
 }
 
 # TODO: Set up Apache Kafka cluster for scalable event streaming
 #  and ensure proper data retention policies are configured.
+
 module "kafka_statefulset" {
-  source         = "./modules/statefulset"
-  name           = "kafka"
-  app_label      = "kafka"
+  source = "./modules/statefulset"
+
+  name      = "kafka"
+  app_label = "kafka"
+
+  labels = {
+    app = "kafka"
+  }
+
   image          = "apache/kafka:3.9.0"
   container_name = "kafka"
   replicas       = 1
@@ -158,8 +166,6 @@ module "kafka_statefulset" {
     memory = "4Gi"
   }
 
-  # Health checks for Kafka: Liveness and readiness probes ensure
-  # that Kafka is running and responsive by listing topics.
   liveness_probe = {
     initial_delay_seconds = 120
     period_seconds        = 30
@@ -237,22 +243,24 @@ module "kafka_statefulset" {
     }
   ]
 
-  labels = {
-    env = "dev"
-  }
-
-  mount_path  = "/var/lib/kafka/data"
-  pv_path     = "/mnt/data/kafka-logs"
-  pv_storage  = "20Gi"
-  pvc_storage = "20Gi"
+  mount_path = "/var/lib/kafka/data"
+  pv_path    = "/mnt/data/kafka-logs"
+  pv_storage = "10Gi"
 }
 
 # TODO: Deploy Redis cluster for high-performance caching
 #  and ensure persistence and failover configurations are optimized.
+
 module "redis_statefulset" {
-  source         = "./modules/statefulset"
-  name           = "redis"
-  app_label      = "redis"
+  source = "./modules/statefulset"
+
+  name      = "redis"
+  app_label = "redis"
+
+  labels = {
+    app = "redis"
+  }
+
   image          = "redis:7.4.1"
   container_name = "redis"
   replicas       = 1
@@ -268,8 +276,6 @@ module "redis_statefulset" {
     memory = "2Gi"
   }
 
-  # Health checks for Redis: Liveness and readiness probes ensure
-  # that Redis is up and responsive via the 'PING' command.
   liveness_probe = {
     initial_delay_seconds = 60
     period_seconds        = 30
@@ -290,12 +296,7 @@ module "redis_statefulset" {
 
   environment = []
 
-  labels = {
-    env = "dev"
-  }
-
-  mount_path  = "/data"
-  pv_path     = "/mnt/data/redis-logs"
-  pv_storage  = "5Gi"
-  pvc_storage = "5Gi"
+  mount_path = "/data"
+  pv_path    = "/mnt/data/redis-logs"
+  pv_storage = "5Gi"
 }
