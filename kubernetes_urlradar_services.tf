@@ -3,7 +3,8 @@
 #       Current configurations use NodePort for external access.
 
 module "urlradar_svc" {
-  source       = "./modules/service"
+  source = "./modules/service"
+
   name         = "urlradar-svc"
   app_label    = module.urlradar_deployment.deployment_app_label
   service_type = "NodePort"
@@ -22,7 +23,8 @@ module "urlradar_svc" {
 }
 
 module "auth-server-svc" {
-  source       = "./modules/service"
+  source = "./modules/service"
+
   name         = "auth-server-svc"
   app_label    = module.auth_server_deployment.deployment_app_label
   service_type = "NodePort"
@@ -41,7 +43,8 @@ module "auth-server-svc" {
 }
 
 module "mongodb_svc" {
-  source    = "./modules/service"
+  source = "./modules/service"
+
   name      = "mongodb-svc"
   app_label = module.mongodb_statefulset.statefulset_name
 
@@ -59,7 +62,8 @@ module "mongodb_svc" {
 }
 
 module "redis_svc" {
-  source    = "./modules/service"
+  source = "./modules/service"
+
   name      = "redis-svc"
   app_label = module.redis_statefulset.statefulset_name
 
@@ -77,7 +81,8 @@ module "redis_svc" {
 }
 
 module "kafka_svc" {
-  source    = "./modules/service"
+  source = "./modules/service"
+
   name      = "kafka-svc"
   app_label = module.kafka_statefulset.statefulset_name
 

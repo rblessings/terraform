@@ -1,17 +1,10 @@
-variable "pvc_namespace" {
-  type        = string
-  description = "The name of the PVC namespace."
-  default     = "default"
+variable "app_label" {
+  description = "PV, PVC, and StatefulSet labels"
 }
 
 variable "pv_name" {
   type        = string
   description = "The name of the PV"
-}
-
-variable "pvc_name" {
-  type        = string
-  description = "The name of the PVC."
 }
 
 variable "labels" {
@@ -23,7 +16,7 @@ variable "labels" {
 variable "pv_storage" {
   type        = string
   description = "The storage size for the PersistentVolume."
-  default     = "20Gi"
+  default     = "15Gi"
 }
 
 variable "pv_access_modes" {
@@ -41,23 +34,5 @@ variable "pv_path" {
 variable "pv_storage_class" {
   type        = string
   description = "The storage class for the PersistentVolume."
-  default     = "slow"
-}
-
-variable "pvc_storage" {
-  type        = string
-  description = "The storage size for the PersistentVolumeClaim."
-  default     = "20Gi"
-}
-
-variable "pvc_access_modes" {
-  type        = list(string)
-  description = "The access modes for the PersistentVolumeClaim."
-  default     = ["ReadWriteOnce"]
-}
-
-variable "pvc_storage_class" {
-  type        = string
-  description = "The storage class for the PersistentVolumeClaim."
   default     = "slow"
 }

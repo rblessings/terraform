@@ -7,7 +7,8 @@ resource "kubernetes_persistent_volume" "this" {
   metadata {
     name = var.pv_name
     labels = merge(var.labels, {
-      type = "hostpath" # Label to ensure PVC binds to the correct PV
+      app  = var.app_label, # Ensure this matches the StatefulSet labels
+      type = "hostpath"     # Label to ensure PVC binds to the correct PV
     })
   }
 
@@ -25,24 +26,5 @@ resource "kubernetes_persistent_volume" "this" {
     }
 
     storage_class_name = var.pv_storage_class
-  }
-}
-
-resource "kubernetes_persistent_volume_claim" "this" {
-  metadata {
-    name      = var.pvc_name
-    namespace = var.pvc_namespace
-  }
-
-  spec {
-    resources {
-      requests = {
-        storage = var.pvc_storage
-      }
-    }
-
-    access_modes       = var.pvc_access_modes
-    storage_class_name = var.pvc_storage_class
-    volume_name        = kubernetes_persistent_volume.this.metadata[0].name
   }
 }
