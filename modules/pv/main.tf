@@ -1,7 +1,6 @@
-# TODO: The StatefulSet is currently using HostPath volumes for persistent storage.
-#       While functional for single-node deployments, this setup limits scalability and prevents horizontal scaling across multiple nodes.
-#       Consider transitioning to a more scalable solution (e.g., network-attached storage or cloud volumes).
-#       For alternatives and further discussion, refer to issue #36 at https://github.com/rblessings/terraform/issues/36.
+# TODO: We're currently using HostPath volumes, which work for single-node setups but limit scaling across multiple nodes.
+#       Transition to a more scalable solution (e.g., network-attached storage or cloud volumes) for production.
+#       See issue #36 for alternatives: https://github.com/rblessings/terraform/issues/36.
 
 resource "kubernetes_persistent_volume" "this" {
   metadata {

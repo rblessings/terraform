@@ -5,11 +5,11 @@ resource "kubernetes_namespace" "monitoring" {
 }
 
 # TODO: Review and implement the following before production:
-#   - Ensure the Prometheus service type is appropriately configured (e.g., ClusterIP for internal access or LoadBalancer for external access).
-#   - Set resource requests and limits for CPU and memory to ensure proper resource allocation in production environments.
-#   - Ensure alerting rules and scrape configurations are aligned with production monitoring needs.
-#   - Review the persistent storage configuration for Prometheus (consider enabling PV for Prometheus server if persistent data retention is required).
-#   - Implement proper security settings such as enabling TLS for communication and restricting access to the Prometheus dashboard.
+#   - Verify Prometheus service type (ClusterIP or LoadBalancer for external access).
+#   - Set CPU and memory resource requests/limits for production environments.
+#   - Align alerting rules and scrape configurations with production monitoring needs.
+#   - Review persistent storage configuration (enable PV for Prometheus server if data retention is required).
+#   - Implement security best practices (e.g., enable TLS, restrict Prometheus dashboard access).
 
 resource "helm_release" "prometheus" {
   name       = "prometheus"
@@ -50,11 +50,11 @@ EOF
 }
 
 # TODO: Review and implement the following before production:
-#   - Configure persistent storage for Grafana to ensure data retention between restarts.
-#   - Set resource requests and limits for CPU and memory to ensure efficient resource management in production.
-#   - Secure Grafana admin credentials by using Kubernetes secrets or external vault solutions instead of hardcoding them in values.yaml.
-#   - Review and update the service type (consider ClusterIP or LoadBalancer depending on internal or external access requirements).
-#   - Enable authentication and authorization mechanisms (e.g., OAuth, LDAP) for securing Grafana dashboards.
+#   - Configure persistent storage for Grafana to ensure data retention across restarts.
+#   - Set CPU and memory resource requests/limits for efficient production resource management.
+#   - Secure Grafana admin credentials using Kubernetes secrets or external vault solutions.
+#   - Review service type (ClusterIP or LoadBalancer) based on access requirements.
+#   - Enable authentication and authorization (e.g., OAuth, LDAP) to secure Grafana dashboards.
 
 resource "helm_release" "grafana" {
   name       = "grafana"
@@ -91,10 +91,9 @@ EOF
   ]
 }
 
-# TODO: The StatefulSet is currently using HostPath volumes for persistent storage.
-#       While functional for single-node deployments, this setup limits scalability and prevents horizontal scaling across multiple nodes.
-#       Consider transitioning to a more scalable solution (e.g., network-attached storage or cloud volumes).
-#       For alternatives and further discussion, refer to issue #36 at https://github.com/rblessings/terraform/issues/36.
+# TODO: We're currently using HostPath volumes, which work for single-node setups but limit scaling across multiple nodes.
+#       Transition to a more scalable solution (e.g., network-attached storage or cloud volumes) for production.
+#       See issue #36 for alternatives: https://github.com/rblessings/terraform/issues/36.
 
 # Definition of the Persistent Volume (PV) for Prometheus Alertmanager
 module "kubernetes_persistent_volume" {

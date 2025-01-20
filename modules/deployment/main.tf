@@ -1,13 +1,3 @@
-/*
-  Deploys a workload on Kubernetes using Terraform; suitable for simple workloads.
-  For complex setups, use existing Kubernetes YAML manifests.
-
-  Example:
-  resource "kubernetes_manifest" "example" {
-    provider = kubernetes
-    manifest = yamldecode(file("${path.module}/deployment.yaml"))
-  }
- */
 resource "kubernetes_deployment" "this" {
   metadata {
     name = var.name

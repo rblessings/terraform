@@ -37,20 +37,7 @@ module "auth_server_deployment" {
     }
   }
 
-  environment = [
-    {
-      name  = "SPRING_DATA_REDIS_HOST"
-      value = module.redis_auth_server_svc.name
-    },
-    {
-      name  = "SPRING_DATA_REDIS_PORT"
-      value = "6379"
-    },
-    {
-      name  = "SPRING_SECURITY_OAUTH2_AUTHORIZATIONSERVER_ISSUER"
-      value = "http://auth-server-svc.default.svc.cluster.local:8080"
-    }
-  ]
+  environment = []
 
   depends_on = [
     module.redis_auth_server_statefulset,
