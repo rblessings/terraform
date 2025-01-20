@@ -33,32 +33,7 @@ module "urlradar_deployment" {
     }
   }
 
-  environment = [
-    {
-      name = "SPRING_DATA_MONGODB_URI"
-
-      # TODO: Integrate HashiCorp Vault or Kubernetes Secrets to securely manage
-      #  and retrieve credentials, ensuring encryption at rest and access control.
-
-      value = "mongodb://root:secret@mongodb-svc:27017/urlradar?authSource=admin"
-    },
-    {
-      name  = "SPRING_DATA_REDIS_HOST"
-      value = "redis-svc"
-    },
-    {
-      name  = "SPRING_DATA_REDIS_PORT"
-      value = "6379"
-    },
-    {
-      name  = "SPRING_KAFKA_BOOTSTRAP_SERVERS"
-      value = "kafka-svc:9092"
-    },
-    {
-      name  = "SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI"
-      value = "http://auth-server-svc.default.svc.cluster.local:8080"
-    }
-  ]
+  environment = []
 
   depends_on = [
     module.mongodb_statefulset,
@@ -68,9 +43,7 @@ module "urlradar_deployment" {
   ]
 }
 
-# TODO: Deploy MongoDB replica set and enable automated data
-#  backups for high availability and disaster recovery.
-
+# TODO: Deploy MongoDB replica set and enable automated data backups for high availability and disaster recovery.
 module "mongodb_statefulset" {
   source = "./modules/statefulset"
 
@@ -122,10 +95,9 @@ module "mongodb_statefulset" {
     {
       name = "MONGO_INITDB_ROOT_PASSWORD"
 
-      # TODO: Integrate HashiCorp Vault or Kubernetes Secrets to securely manage
-      #  and retrieve credentials, ensuring encryption at rest and access control.
-
-      value = "secret"
+      # TODO: Integrate HashiCorp Vault or Kubernetes Secrets for secure
+      #  credential management with encryption at rest and proper access control.
+      value = "root"
     },
     {
       name  = "MONGO_INITDB_DATABASE"
@@ -140,7 +112,6 @@ module "mongodb_statefulset" {
 
 # TODO: Set up Apache Kafka cluster for scalable event streaming
 #  and ensure proper data retention policies are configured.
-
 module "kafka_statefulset" {
   source = "./modules/statefulset"
 
@@ -250,7 +221,6 @@ module "kafka_statefulset" {
 
 # TODO: Deploy Redis cluster for high-performance caching
 #  and ensure persistence and failover configurations are optimized.
-
 module "redis_statefulset" {
   source = "./modules/statefulset"
 

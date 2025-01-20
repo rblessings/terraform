@@ -36,7 +36,7 @@ check_sudo() {
     echo "Solutions:" >&2
     echo "  1. If you lack sudo access, contact your administrator." >&2
     echo "  2. If you have sudo access, run the script with 'sudo':" >&2
-    echo "     sudo ./setup_directories.sh" >&2
+    echo "     sudo ./setup-dirs.sh" >&2
     exit 1
   fi
 }

@@ -1,6 +1,5 @@
-# TODO: Replace Kubernetes Service NodePort type with Ingress for all services to improve external access management.
-#       Benefits: Centralized routing, enhanced security, and better scalability.
-#       Current configurations use NodePort for external access.
+# TODO: Replace NodePort with Ingress for all services to streamline external access management.
+#       Benefits include centralized routing, improved security, and enhanced scalability.
 
 module "urlradar_svc" {
   source = "./modules/service"

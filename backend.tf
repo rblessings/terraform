@@ -2,12 +2,10 @@ terraform {
 
   cloud {
 
-    # The name of the organization managing the Terraform workspace,
-    # used to group and organize resources.
+    # Organization for grouping and managing Terraform workspaces and resources.
     organization = "rblessings"
 
-    # The name of the workspace, used to manage different
-    # environments or configurations (e.g., dev, prod) within the same project.
+    # Workspace for isolating environments (e.g., dev, prod) and managing state.
     workspaces {
       name = "dev"
     }
